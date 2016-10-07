@@ -37,6 +37,11 @@ public class Downloader implements Runnable {
 		return target;
 	}
 	
+	public static String getName(File file) {
+		String filename = file.getName() ;
+		return filename.substring(0, 4) ;
+	}
+	
 	public static void main(String args[]) throws Exception{
 		
 		// Find a location

@@ -1,0 +1,39 @@
+<html>
+        <title>#TITLE#</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <style>
+                body {padding : 10px;}
+                img.chart {width:400px; margin: 3px 3px 3px 0 ;}
+                div.title{background: #E8E8FF; width:95%; color:#333; padding:5px 15px;}
+        </style>
+        <script>
+                $(document).ready(function() {
+                        $("div[stock]").each(function() {
+                                var stock = $(this).attr("stock") ;
+                                var title = $("<div class='title'>"+stock+"</div>") ;
+                                $(this).append(title);
+
+                                var oneMImg = $("<img class='chart'/>") ;
+                                oneMImg.attr("src", "http://charts.aastocks.com/servlet/Charts?scheme=3&com=100&chartwidth=438&chartheight=250&stockid=00"+stock+".HK&period=2&type=5&Indicator=1&indpara1=10&indpara2=20&indpara3=50&indpara4=100&indpara5=150&subChart1=1&ref1para1=0&ref1para2=0&ref1para3=0&fontsize=12&15MinDelay=T&lang=1&titlestyle=1&logoStyle=1&") ;
+                                $(this).append(oneMImg) ;
+                                var threeMImg = $("<img class='chart'/>") ;
+                                threeMImg.attr("src", "http://charts.aastocks.com/servlet/Charts?scheme=3&com=100&chartwidth=438&chartheight=250&stockid=00"+stock+".HK&period=7&type=1&Indicator=1&indpara1=10&indpara2=20&indpara3=50&indpara4=100&indpara5=150&subChart1=1&ref1para1=0&ref1para2=0&ref1para3=0&fontsize=12&15MinDelay=T&lang=1&titlestyle=1&logoStyle=1&") ;
+                                $(this).append(threeMImg) ;
+                                var yearImg = $("<img class='chart'/>") ;
+                                //yearImg.attr("src", "https://chart.finance.yahoo.com/c/1y/0/"+stock+".hk?lang=zh-Hant-HK&region=HK") ;
+                                yearImg.attr("src", "http://charts.aastocks.com/servlet/Charts?scheme=3&com=100&chartwidth=438&chartheight=250&stockid=00"+stock+".HK&period=9&type=5&Indicator=1&indpara1=10&indpara2=20&indpara3=50&indpara4=100&indpara5=150&subChart1=1&ref1para1=0&ref1para2=0&ref1para3=0&fontsize=12&15MinDelay=T&lang=1&titlestyle=1&logoStyle=1&") ;
+
+                                $(this).append(yearImg) ;
+                        }) ;
+                }) ;
+        </script>
+        <body>
+        	#HEADER#
+        	<hr/>
+        	#CONTENT#
+        	<!-- CONTENT should like that
+                <div stock="0005"></div>
+                <div stock="2388"></div>
+			-->
+        </body>
+</html>
