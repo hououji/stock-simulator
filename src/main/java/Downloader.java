@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.commons.io.FileUtils;
@@ -47,12 +47,14 @@ public class Downloader implements Runnable {
 		// Find a location
 		File dir = new File("./data/" + new SimpleDateFormat("yyyyMMdd").format(new Date())) ;
 		
-		Executor executor = Executors.newFixedThreadPool(5);  
+		ExecutorService executor = Executors.newFixedThreadPool(5);  
 		for(int i=1; i<=9999; i++) {
 			String currCode = i + "" ;
 			currCode = StringUtils.leftPad(currCode, 4, '0') ;
 			executor.execute(new Downloader(currCode, dir));
 		}
+		executor.shutdown();
+		
 		
 //		Downloader dl = new Downloader() ;
 //		dl.download("ABCD", new File("."));
@@ -61,7 +63,9 @@ public class Downloader implements Runnable {
 	public void run()  {
 		File file = new File(dir, code + ".csv") ;
 		try {
-			URL url = new URL("http://real-chart.finance.yahoo.com/table.csv?s="+code+".HK&d=8&e=13&f=2016&g=d&a=0&b=4&c=2000&ignore=.csv") ;
+			Date now = new Date() ;
+			//URL url = new URL("http://real-chart.finance.yahoo.com/table.csv?s="+code+".HK&d=8&e=13&f=2016&g=d&a=0&b=4&c=2000&ignore=.csv") ;
+			URL url = new URL("http://real-chart.finance.yahoo.com/table.csv?s="+code+".HK&d="+now.getMonth()+"&e="+now.getDate()+"&f="+(now.getYear() + 1900)+"&g=d&a=0&b=4&c=2000&ignore=.csv") ;
 			FileUtils.copyURLToFile(url, file) ;
 			Log.log("download complete : " + code) ;
 		}catch(FileNotFoundException fnfe) {

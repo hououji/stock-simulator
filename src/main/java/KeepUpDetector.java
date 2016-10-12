@@ -26,7 +26,7 @@ public class KeepUpDetector {
 
 			if(debug) Log.log("file:" + file.getAbsolutePath());
 
-			for(int i = 40; i>=0; i--){
+			for(int i = 20; i>=0; i--){
 				double avg10 = csv.avg(i, 10, CSV.ADJ_CLOSE) ;
 				double avg10Yesterday = csv.avg(i + 1, 10, CSV.ADJ_CLOSE) ;
 				
