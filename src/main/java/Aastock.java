@@ -16,8 +16,11 @@ public class Aastock {
 
 	String html = "" ;
 	
+	String code = "" ;
+	
 	public Aastock(String code) {
 		InputStream in = null;
+		this.code = code ;
 		try{
 			URL url = new URL("http://www.aastocks.com/tc/mobile/Quote.aspx?symbol=0" + code) ;
 			in = url.openStream() ; 
@@ -56,7 +59,7 @@ public class Aastock {
 	public String getInt() {
 		int i1 = html.indexOf("收益率") ;
 		i1 = html.indexOf(">", i1) ;
-		int i2 = html.indexOf("%", i1) ;
+		int i2 = html.indexOf("<", i1) ;
 		if(i1 > 0 && i2 > 0) {
 			String s = html.substring(i1+1, i2) ;
 			return s ;
@@ -118,7 +121,7 @@ public class Aastock {
 	}
 	
 	public String toString() {
-		return this.getName() +","+ this.getMarketCap() + "," + this.getVol()
+		return code + "," +this.getName() +","+ this.getMarketCap() + "," + this.getVol()
 				+","+this.getPe()+","+this.getInt()
 				+","+this.getClose() + "," +this.getHist52w() ;
 	}
@@ -129,10 +132,11 @@ public class Aastock {
 		
 		// Real
 		File dir = Downloader.getRecentDirectory() ;
+		System.out.println(dir.getAbsolutePath()) ;
 		File[] files = dir.listFiles() ;
 		Arrays.sort(files);
 		List<String> codes = new ArrayList<String>() ;
-		OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream("data/market_cap.csv"),"utf8") ;
+		OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream("output/market_cap.csv"),"utf8") ;
 		PrintWriter out = new PrintWriter(osw); 
 		out.print("\uFEFF"); // BOM, make Excel auto use UTF8
 		for(File file : files) {
@@ -141,6 +145,7 @@ public class Aastock {
 				Aastock a = new Aastock(code) ;
 				out.println(a.toString()) ;
 				System.out.println(a.toString());
+				out.flush(); 
 				Thread.sleep(1000);
 			}catch(Exception ex){
 				ex.printStackTrace(); 
