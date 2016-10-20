@@ -11,12 +11,15 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 
 
-public class KeepUpDetector {
+public class KeepUpDetector extends Detector{
 
 	static boolean debug = false;
 
+	private int avgDay = 10;
+	private int keepUpDay = 15;
 	
-	public static boolean run(File file) {
+	@Override
+	public boolean detect(File file) {
 		try{
 			CSV csv = new CSV(file) ;
 			
@@ -26,11 +29,11 @@ public class KeepUpDetector {
 
 			if(debug) Log.log("file:" + file.getAbsolutePath());
 
-			for(int i = 20; i>=0; i--){
-				double avg10 = csv.avg(i, 10, CSV.ADJ_CLOSE) ;
-				double avg10Yesterday = csv.avg(i + 1, 10, CSV.ADJ_CLOSE) ;
+			for(int i = keepUpDay; i>=0; i--){
+				double avg = csv.avg(i, avgDay, CSV.ADJ_CLOSE) ;
+				double avgYesterday = csv.avg(i + 1, avgDay, CSV.ADJ_CLOSE) ;
 				
-				if(avg10Yesterday > avg10) {
+				if(avgYesterday > avg) {
 					return false; // fail
 				}
 			}
@@ -43,42 +46,29 @@ public class KeepUpDetector {
 			ex.printStackTrace();
 			return false;
 		}
-		
+	}
+
+	@Override
+	public String getName() {
+		return "keep-up-detector";
+	}
+
+	@Override
+	public String getDesc() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	public static void main(String args[]) throws Exception {
-	
-		File dir = Downloader.getRecentDirectory() ;
-		
-//		run(new File(dir,"0015.csv")) ;
-		File[] files = dir.listFiles() ;
-		Arrays.sort(files);
-		List<String> codes = new ArrayList<String>() ;
-		for(File file : files) {
-			if(run(file)){
-				String code = Downloader.getName(file) ;
-				codes.add(code) ;
-			}
-		}
-		
-		// make html
-		String template = Misc.getFile("list-template.html") ;
-		String header = new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " - Keep Up Detector"  ;
-		String title = "Keep Up Detector" ;
-		StringBuffer content = new StringBuffer() ;
-		for(String code : codes) {
-			content.append("<div stock='"+code+"'></div>\r\n") ;
-		}
-		template = template.replace("#HEADER#", header) ;
-		template = template.replace("#TITLE#", title) ;
-		template = template.replace("#CONTENT#", content) ;
-		
-		File outputDir = new File("output") ;
-		outputDir.mkdirs() ;
-		
-		FileOutputStream out = new FileOutputStream(new File(outputDir, "keep-up-detector.html")) ;
-		IOUtils.write(template, out);
-		out.flush();
-		out.close() ;
+		usage() ;
+		KeepUpDetector d = new KeepUpDetector() ;
+		d.avgDay = Integer.parseInt(args[0]) ;
+		d.keepUpDay = Integer.parseInt(args[1]) ;
+		d.makeHtml();
 	}
+	
+	private static void usage() {
+		System.err.println("Usage : <avgDay> <keepUpDay>");
+	}
+
 }
