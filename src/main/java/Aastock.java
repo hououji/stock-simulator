@@ -42,37 +42,37 @@ public class Aastock {
 	}
 
 	
-	public float getPe() {
+	public String getPe() {
 		int i1 = html.indexOf("市盈率") ;
 		i1 = html.indexOf(">", i1) ;
 		int i2 = html.indexOf("<", i1) ;
 		if(i1 > 0 && i2 > 0) {
 			String s = html.substring(i1+1, i2) ;
-			return decode(s) ;
+			return s;
 		}
-		return 0 ;
+		return "" ;
 	}
 	
-	public float getInt() {
+	public String getInt() {
 		int i1 = html.indexOf("收益率") ;
 		i1 = html.indexOf(">", i1) ;
 		int i2 = html.indexOf("%", i1) ;
 		if(i1 > 0 && i2 > 0) {
 			String s = html.substring(i1+1, i2) ;
-			return decode(s) ;
+			return s ;
 		}
-		return 0 ;
+		return "" ;
 	}
 	
-	public float getClose() {
+	public String getClose() {
 		int i1 = html.indexOf("前收市價") ;
 		i1 = html.indexOf(">", i1) ;
 		int i2 = html.indexOf("<", i1) ;
 		if(i1 > 0 && i2 > 0) {
 			String s = html.substring(i1+1, i2) ;
-			return decode(s) ;
+			return s ;
 		}
-		return 0 ;
+		return "" ;
 	}
 	
 	public String getName() {
@@ -136,11 +136,15 @@ public class Aastock {
 		PrintWriter out = new PrintWriter(osw); 
 		out.print("\uFEFF"); // BOM, make Excel auto use UTF8
 		for(File file : files) {
-			String code = Downloader.getName(file) ;
-			Aastock a = new Aastock(code) ;
-			out.println(a.toString()) ;
-			System.out.println(a.toString());
-			Thread.sleep(1000);
+			try{
+				String code = Downloader.getName(file) ;
+				Aastock a = new Aastock(code) ;
+				out.println(a.toString()) ;
+				System.out.println(a.toString());
+				Thread.sleep(1000);
+			}catch(Exception ex){
+				ex.printStackTrace(); 
+			}
 		}
 		out.flush(); 
 		out.close();
