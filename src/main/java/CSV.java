@@ -18,6 +18,7 @@ public class CSV {
 	List<String> dates = new ArrayList<String>() ;
 	List<double[]> dataList = new ArrayList<double[]>() ;
 	String name = "" ;
+	String code = "" ;
 	
 	static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd") ;
 	
@@ -35,9 +36,34 @@ public class CSV {
 		
 		return to2dp(sum / len) ;
 	}
+
+	public double max(int start, int len, int type) {
+		double max = 0 ;
+		
+		for(int i=start; i<start+len;i ++) {
+			double d = get(i,type) ;
+			if(d > max) max = d ;
+		}
+		
+		return to2dp(max) ;
+	}
+	public double min(int start, int len, int type) {
+		double min = Double.MAX_VALUE ;
+		
+		for(int i=start; i<start+len;i ++) {
+			double d = get(i,type) ;
+			if(d < min) min = d ;
+		}
+		
+		return to2dp(min) ;
+	}
+
 	
 	public String getName() {
 		return name ;
+	}
+	public String getCode() {
+		return code;
 	}
 	
 	public int getLen() {
@@ -59,6 +85,7 @@ public class CSV {
 	public CSV(File file) throws Exception 
 	{
 		name = file.getName() ;
+		code = name.substring(0, 4) ;
 		BufferedReader r = new BufferedReader(new FileReader(file)) ;
 		r.readLine() ; // skip this first line, it is a lable
 		while(true) {
