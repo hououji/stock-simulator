@@ -47,6 +47,7 @@ public class LowPriceDetector extends Detector{
 //			if(csv.get(0, CSV.VOL_PRICE) < 100000000) return false;
 			if(marketCap.get(csv.getCode()) == null || marketCap.get(csv.getCode()) < 200) return false;
 			if(csv.getLen() < 250) return false;
+			if(csv.max(0, 10, CSV.VOL) < 0.1) return false;
 
 			if(debug) Log.log("file:" + file.getAbsolutePath());
 
@@ -80,7 +81,7 @@ public class LowPriceDetector extends Detector{
 	@Override
 	public String getDesc() {
 		// TODO Auto-generated method stub
-		return null;
+		return start + " - " + end;
 	}
 	
 	public static void main(String args[]) throws Exception {
