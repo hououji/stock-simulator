@@ -13,31 +13,35 @@ import org.apache.commons.io.IOUtils;
 
 public class VolumeSpecialDetector extends Detector{
 
-	int ratio = 2 ;
-	int detectDayRange = 5; 
+	double x = 1 ;
 	
 	public boolean detect(File file) {
 		try{
 			CSV csv = new CSV(file) ;
 			
 			// ignore if too small
-			if(csv.get(0, CSV.VOL_PRICE) < 10000000) return false;
+			if(this.isMarketCapGreat(csv.getCode(), 200) == false) return false ;
 			if(csv.getLen() < 250) return false;
+			if(csv.max(0, 10, CSV.VOL) < 0.1) return false;
 
 //			if(debug) Log.log("file:" + file.getAbsolutePath());
 
-			// 5 day avg vol > 30 day avg vol * 10
-			double maxRatio = 0 ;
-			for(int i = 0; i<csv.getLen() - 31 && i < detectDayRange; i++){
-				double avg2 = csv.avg(i, 2, CSV.VOL) ;
-				double avg30 = csv.avg(i+30, 10, CSV.VOL) ;
-				double ratio = avg2 / avg30 ;
-				if(ratio > maxRatio ) maxRatio = ratio ;
-				if(ratio > 2 && ratio < 10) {
-					Log.log(csv.getName() + " " +csv.getDate(i) + " " + CSV.to2dp(ratio));
-					i = i + 30;
-				}
-			}			
+			// 250 vol, out of 1 s.d.
+			List<Double> vols = new ArrayList<Double>() ;
+			double t = 0 ;
+			for(int i=0; i<250; i++) {
+				double v = csv.get(i, CSV.VOL) ;
+				if(v == 0) continue;
+				vols.add(v) ;
+				t += v;
+			}
+			
+			double avg = t / vols.size() ;
+			double sd = this.sd(vols) ;
+			double currVol = (vols.get(0) + vols.get(1) + vols.get(2) + vols.get(3))  / 4;    
+			if(currVol < avg + sd * x) return false;
+			System.out.println("code:" + csv.getCode() + ",sd:" + csv.to2dp( (currVol - avg )/sd));
+
 			return true;
 		}catch(Exception ex) {
 			ex.printStackTrace();
@@ -50,18 +54,17 @@ public class VolumeSpecialDetector extends Detector{
 	}
 	
 	public String getDesc() {
-		return " - ratio : " + ratio ; 
+		return " - volume out of S.D. : " + x ; 
 	}
 	
 	public static void main(String args[]) throws Exception {
 		
 		VolumeSpecialDetector d = new VolumeSpecialDetector() ;
-		d.ratio = Integer.parseInt(args[0]) ;
-		d.detectDayRange = Integer.parseInt(args[1]) ;
+		d.x = Double.parseDouble(args[0]) ;
 		d.makeHtml();
 	}
 	
 	private void usage() {
-		System.err.println("<detect ratio> <detectDayRange>");
+		System.err.println("<volume out of X * S.D. (double)>");
 	}
 }

@@ -18,25 +18,6 @@ public class LowPriceDetector extends Detector{
 	
 	Map<String, Double> marketCap = new HashMap<String,Double>() ; 
 	
-	public LowPriceDetector() {
-		try{
-			BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream("output/market_cap.csv"), "utf8") );
-			while(true) {
-				try{
-					String line = in.readLine() ;
-					if(line == null) break;
-					StringTokenizer st = new StringTokenizer(line, ",") ;
-					String code = st.nextToken() ;
-					st.nextToken() ;
-					Double cap = Double.parseDouble(st.nextToken()) ;
-					marketCap.put(code, cap) ;
-				}catch(Exception ex){
-				}
-			}
-		}catch(Exception ex) {
-			ex.printStackTrace();
-		}
-	}
 	
 	@Override
 	public boolean detect(File file) {
@@ -45,7 +26,8 @@ public class LowPriceDetector extends Detector{
 			
 			// ignore if too small
 //			if(csv.get(0, CSV.VOL_PRICE) < 100000000) return false;
-			if(marketCap.get(csv.getCode()) == null || marketCap.get(csv.getCode()) < 200) return false;
+//			if(marketCap.get(csv.getCode()) == null || marketCap.get(csv.getCode()) < 200) return false;
+			if(this.isMarketCapGreat(csv.getCode(), 200) == false) return false ;
 			if(csv.getLen() < 250) return false;
 			if(csv.max(0, 10, CSV.VOL) < 0.1) return false;
 

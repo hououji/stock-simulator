@@ -24,8 +24,9 @@ public class KeepUpDetector extends Detector{
 			CSV csv = new CSV(file) ;
 			
 			// ignore if too small
-			if(csv.get(0, CSV.VOL_PRICE) < 100000000) return false;
+			if(this.isMarketCapGreat(csv.getCode(), 200) == false) return false ;
 			if(csv.getLen() < 250) return false;
+			if(csv.max(0, 10, CSV.VOL) < 0.1) return false;
 
 			if(debug) Log.log("file:" + file.getAbsolutePath());
 
