@@ -49,7 +49,9 @@ public abstract class Detector {
 		String title = this.getName() ;
 		StringBuffer content = new StringBuffer() ;
 		for(String code : codes) {
-			content.append("<div stock='"+code+"'></div>\r\n") ;
+			Aastock aa = new Aastock(code) ;
+			content.append("<div stock='"+code+"'><div class='title'>"+code+aa.getName()+",PE:"+aa.getPe()
+					+",Int:"+aa.getInt()+",Cap:"+aa.getMarketCap()+"億</div></div>\r\n") ;
 		}
 		template = template.replace("#HEADER#", header + this.getDesc()) ;
 		template = template.replace("#TITLE#", title) ;

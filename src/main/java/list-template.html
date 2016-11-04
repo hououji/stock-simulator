@@ -11,7 +11,7 @@
                         $("div[stock]").each(function() {
                                 var stock = $(this).attr("stock") ;
                                 var title = $("<div class='title'>"+stock+"</div>") ;
-                                $(this).append(title);
+                                //$(this).append(title);
 
                                 var oneMImg = $("<img class='chart'/>") ;
                                 oneMImg.attr("src", "http://charts.aastocks.com/servlet/Charts?scheme=3&com=100&chartwidth=438&chartheight=250&stockid=00"+stock+".HK&period=2&type=5&Indicator=1&indpara1=10&indpara2=20&indpara3=50&indpara4=100&indpara5=150&subChart1=1&ref1para1=0&ref1para2=0&ref1para3=0&fontsize=12&15MinDelay=T&lang=1&titlestyle=1&logoStyle=1&") ;

@@ -55,7 +55,7 @@ public class Aastock {
 		}
 		return "" ;
 	}
-	
+
 	public String getInt() {
 		int i1 = html.indexOf("收益率") ;
 		i1 = html.indexOf(">", i1) ;
