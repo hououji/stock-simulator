@@ -20,19 +20,21 @@ public class LowPriceDetector extends Detector{
 	
 	
 	@Override
-	public boolean detect(File file) {
+	public boolean detect(File file, int backDays) {
 		try{
 			CSV csv = new CSV(file) ;
+			csv.setBaseDay(backDays);
 			
 			// ignore if too small
 //			if(csv.get(0, CSV.VOL_PRICE) < 100000000) return false;
 //			if(marketCap.get(csv.getCode()) == null || marketCap.get(csv.getCode()) < 200) return false;
 			if(this.isMarketCapGreat(csv.getCode(), 200) == false) return false ;
-			if(csv.getLen() < 250) return false;
+			if(csv.getLen() < backDays + 250) return false;
 			if(csv.max(0, 10, CSV.VOL) < 0.1) return false;
 
 			if(debug) Log.log("file:" + file.getAbsolutePath());
 
+			
 			double max = csv.max(0, 250, CSV.ADJ_CLOSE) ;
 			double min = csv.min(0, 250, CSV.ADJ_CLOSE) ;
 			double curr = csv.get(0, CSV.ADJ_CLOSE) ;

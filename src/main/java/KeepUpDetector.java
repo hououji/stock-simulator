@@ -19,9 +19,10 @@ public class KeepUpDetector extends Detector{
 	private int keepUpDay = 15;
 	
 	@Override
-	public boolean detect(File file) {
+	public boolean detect(File file, int backDay) {
 		try{
 			CSV csv = new CSV(file) ;
+			csv.setBaseDay(backDay);
 			
 			// ignore if too small
 			if(this.isMarketCapGreat(csv.getCode(), 200) == false) return false ;

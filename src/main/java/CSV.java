@@ -19,12 +19,17 @@ public class CSV {
 	List<double[]> dataList = new ArrayList<double[]>() ;
 	String name = "" ;
 	String code = "" ;
+	int baseDay = 0 ;
 	
 	static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd") ;
 	
 	public static  double to2dp(double d) {
 		long l = (long)(d * 100) ;
 		return l / 100.0;
+	}
+	
+	public void setBaseDay(int bd) {
+		baseDay = bd;
 	}
 	
 	public double avg(int start, int len, int type) {
@@ -70,11 +75,11 @@ public class CSV {
 		return dates.size() ;
 	}
 	public String getDate(int num) {
-		return dates.get(num) ;
+		return dates.get(num + baseDay) ;
 	}
 	public double get(int num, int type) {
 		if(type < 100) {
-			return  dataList.get(num)[type] ;
+			return  dataList.get(num +  + baseDay)[type] ;
 		}
 		if(type == VOL_PRICE) {
 			return get(num,VOL) * get(num,ADJ_CLOSE) ;

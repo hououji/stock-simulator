@@ -15,9 +15,10 @@ public class VolumeSpecialDetector extends Detector{
 
 	double x = 1 ;
 	
-	public boolean detect(File file) {
+	public boolean detect(File file, int baseDay) {
 		try{
 			CSV csv = new CSV(file) ;
+			csv.setBaseDay(baseDay);
 			
 			// ignore if too small
 			if(this.isMarketCapGreat(csv.getCode(), 200) == false) return false ;

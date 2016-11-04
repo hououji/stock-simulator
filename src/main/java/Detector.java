@@ -21,7 +21,7 @@ public abstract class Detector {
 	
 	Map<String, Double> marketCap = null ;
 	
-	public abstract boolean detect(File file) ;
+	public abstract boolean detect(File file, int backDays) ;
 	
 	public abstract String  getName() ;
 	
@@ -36,10 +36,18 @@ public abstract class Detector {
 		File[] files = dir.listFiles() ;
 		Arrays.sort(files);
 		List<String> codes = new ArrayList<String>() ;
+		List<Integer> keepDays = new ArrayList<Integer>();
 		for(File file : files) {
-			if(detect(file)){
+			if(detect(file,0)){
 				String code = Downloader.getName(file) ;
 				codes.add(code) ;
+				
+				// get the keep day
+				int i;
+				for(i=1; i<100; i++) {
+					if(detect(file,i)) break;
+				}
+				keepDays.add(i) ;
 			}
 		}
 		
@@ -48,10 +56,12 @@ public abstract class Detector {
 		String header = new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " - " + this.getName()  ;
 		String title = this.getName() ;
 		StringBuffer content = new StringBuffer() ;
-		for(String code : codes) {
+		for(int i=0; i<codes.size(); i++ ) {
+			String code = codes.get(i) ;
+			int keepDay = keepDays.get(i) ;
 			Aastock aa = new Aastock(code) ;
 			content.append("<div stock='"+code+"'><div class='title'>"+code+aa.getName()+",PE:"+aa.getPe()
-					+",Int:"+aa.getInt()+",Cap:"+aa.getMarketCap()+"億</div></div>\r\n") ;
+					+",Int:"+aa.getInt()+",Cap:"+aa.getMarketCap()+"億, "+keepDay+" days</div></div>\r\n") ;
 		}
 		template = template.replace("#HEADER#", header + this.getDesc()) ;
 		template = template.replace("#TITLE#", title) ;
