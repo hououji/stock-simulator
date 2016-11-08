@@ -22,5 +22,11 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/javaml/ajt-2.9.jar"/>
+	<classpathentry kind="lib" path="lib/javaml/commons-math-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/javaml/Jama-1.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/javaml/javaml-0.1.7.jar"/>
+	<classpathentry kind="lib" path="lib/javaml/libsvm.jar"/>
+	<classpathentry kind="lib" path="lib/javaml/weka.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -19,7 +19,7 @@ import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 
 public abstract class Detector {
 	
-	Map<String, Double> marketCap = null ;
+	Helper h = new Helper(); 
 	
 	public abstract boolean detect(File file, int backDays) ;
 	
@@ -76,31 +76,6 @@ public abstract class Detector {
 		out.close() ;
 	}
 	
-	private synchronized void initMarketCap() {
-		marketCap = new HashMap<String,Double>() ;
-		try{
-			BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream("output/market_cap.csv"), "utf8") );
-			while(true) {
-				try{
-					String line = in.readLine() ;
-					if(line == null) break;
-					StringTokenizer st = new StringTokenizer(line, ",") ;
-					String code = st.nextToken() ;
-					st.nextToken() ;
-					Double cap = Double.parseDouble(st.nextToken()) ;
-					marketCap.put(code, cap) ;
-				}catch(Exception ex){
-				}
-			}
-		}catch(Exception ex) {
-			ex.printStackTrace();
-		}
-	}
-	protected boolean isMarketCapGreat(String code, int i) {
-		if(marketCap == null) initMarketCap() ;
-		if(marketCap.get(code) == null || marketCap.get(code) < i) return false;
-		return true;
-	}
 	protected double sd(List<Double> list) {
 		StandardDeviation sd = new StandardDeviation();
 		double d[] = new double[list.size()] ;
@@ -108,5 +83,9 @@ public abstract class Detector {
 			d[i] = list.get(i) ;
 		}
 		return sd.evaluate(d) ;
+	}
+	
+	protected boolean isMarketCapGreat(String code, int i) {
+		return h.isMarketCapGreat(code,i) ;
 	}
 }

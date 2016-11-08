@@ -26,12 +26,13 @@ public class Downloader implements Runnable {
 		File root = new File("./data") ;
 		File target = null ;
 		for(File dir : root.listFiles()) {
+			if( ! dir.isDirectory()) continue;
 			if(target == null) {
 				target = dir;
 				continue;
 			}
 			if(dir.getName().compareTo(target.getName()) > 0) {
-				dir = target ;
+				target = dir ;
 			}
 		}
 		return target;

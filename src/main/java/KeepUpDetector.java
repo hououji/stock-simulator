@@ -58,7 +58,7 @@ public class KeepUpDetector extends Detector{
 	@Override
 	public String getDesc() {
 		// TODO Auto-generated method stub
-		return null;
+		return "";
 	}
 	
 	public static void main(String args[]) throws Exception {
