@@ -19,9 +19,8 @@ public class KeepUpDetector extends Detector{
 	private int keepUpDay = 15;
 	
 	@Override
-	public boolean detect(File file, int backDay) {
+	public boolean detect(CSV csv, int backDay) {
 		try{
-			CSV csv = new CSV(file) ;
 			csv.setBaseDay(backDay);
 			
 			// ignore if too small
@@ -29,7 +28,7 @@ public class KeepUpDetector extends Detector{
 			if(csv.getLen() < 250) return false;
 			if(csv.max(0, 10, CSV.VOL) < 0.1) return false;
 
-			if(debug) Log.log("file:" + file.getAbsolutePath());
+//			if(debug) Log.log("file:" + file.getAbsolutePath());
 
 			for(int i = keepUpDay; i>=0; i--){
 				double avg = csv.avg(i, avgDay, CSV.ADJ_CLOSE) ;

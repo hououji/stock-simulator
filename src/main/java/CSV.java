@@ -21,7 +21,7 @@ public class CSV {
 	String code = "" ;
 	int baseDay = 0 ;
 	
-	static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd") ;
+	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd") ;
 	
 	public static  double to2dp(double d) {
 		long l = (long)(d * 100) ;
@@ -87,25 +87,29 @@ public class CSV {
 		throw new RuntimeException("NO such CSV field type : " + type) ;
 	}
 	
-	public CSV(File file) throws Exception 
+	public CSV(File file) 
 	{
-		name = file.getName() ;
-		code = name.substring(0, 4) ;
-		BufferedReader r = new BufferedReader(new FileReader(file)) ;
-		r.readLine() ; // skip this first line, it is a lable
-		while(true) {
-			String line = r.readLine() ;
-			if(line == null) break; 
-			double [] data = new double[6] ;
-			int idx = 0 ;
-			StringTokenizer stok = new StringTokenizer(line,",") ;
-			dates.add(stok.nextToken()) ;
-			while(stok.hasMoreElements()) {
-				String token = stok.nextToken() ;
-				data[idx] = Double.parseDouble(token) ;
-				idx ++ ;
+		try{
+			name = file.getName() ;
+			code = name.substring(0, 4) ;
+			BufferedReader r = new BufferedReader(new FileReader(file)) ;
+			r.readLine() ; // skip this first line, it is a lable
+			while(true) {
+				String line = r.readLine() ;
+				if(line == null) break; 
+				double [] data = new double[6] ;
+				int idx = 0 ;
+				StringTokenizer stok = new StringTokenizer(line,",") ;
+				dates.add(stok.nextToken()) ;
+				while(stok.hasMoreElements()) {
+					String token = stok.nextToken() ;
+					data[idx] = Double.parseDouble(token) ;
+					idx ++ ;
+				}
+				dataList.add(data); 
 			}
-			dataList.add(data); 
+		}catch(Exception ex){
+			throw new RuntimeException(ex) ;
 		}
 	}
 	

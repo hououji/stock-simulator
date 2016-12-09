@@ -21,7 +21,7 @@ public abstract class Detector {
 	
 	Helper h = new Helper(); 
 	
-	public abstract boolean detect(File file, int backDays) ;
+	public abstract boolean detect(CSV csv, int backDays) ;
 	
 	public abstract String  getName() ;
 	
@@ -38,14 +38,15 @@ public abstract class Detector {
 		List<String> codes = new ArrayList<String>() ;
 		List<Integer> keepDays = new ArrayList<Integer>();
 		for(File file : files) {
-			if(detect(file,0)){
+			CSV csv = new CSV(file) ;
+			if(detect(csv,0)){
 				String code = Downloader.getName(file) ;
 				codes.add(code) ;
 				
 				// get the keep day
 				int i;
 				for(i=1; i<100; i++) {
-					if(detect(file,i)) break;
+					if(detect(csv,i)) break;
 				}
 				keepDays.add(i) ;
 			}

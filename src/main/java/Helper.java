@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -20,15 +21,17 @@ public class Helper {
 				try{
 					String line = in.readLine() ;
 					if(line == null) break;
+					line = line.replace("\uFEFF", "");
 					StringTokenizer st = new StringTokenizer(line, ",") ;
 					String code = st.nextToken() ;
 					names.put(code,st.nextToken()) ;
 					Double cap = Double.parseDouble(st.nextToken()) ;
 					marketCap.put(code, cap) ;
-//					System.out.println("'"+code+"' " + cap);
+//					System.out.println(code + " " + cap);
 				}catch(Exception ex){
 				}
 			}
+			
 		}catch(Exception ex) {
 			ex.printStackTrace();
 		}

@@ -3,49 +3,44 @@ import info.hououji.Log;
 import java.io.File;
 
 
-public class AvgDetector {
+public class AvgDetector extends Detector {
 
 	static boolean debug = false;
-
 	
-	public static void run(File file) {
-		try{
-			CSV csv = new CSV(file) ;
+	int longAvg;
+	int shortAvg ;
 
-			
-			// ignore if too small
-			if(csv.get(0, CSV.VOL_PRICE) < 100000000) return;
-			if(csv.getLen() < 250) return;
-
-			if(debug) Log.log("file:" + file.getAbsolutePath());
-
-			// 5 day avg vol > 30 day avg vol * 10
-			double maxRatio = 0 ;
-			for(int i = 30; i>=0; i--){
-				double avg2 = csv.avg(i, 5, CSV.ADJ_CLOSE) ;
-				double avg30 = csv.avg(i+30, 60, CSV.ADJ_CLOSE) ;
-				double ratio = avg2 / avg30 ;
-				if(ratio > maxRatio ) maxRatio = ratio ;
-				if(ratio > 1.2 && ratio < 5) {
-					Log.log(csv.getName() + " " +csv.getDate(i) + ",ratio: " + CSV.to2dp(ratio) + ", ex:" + csv.to2dp(csv.get(i, CSV.VOL_PRICE)));
-					i = i - 30;
-				}
-			}
-			if(debug) Log.log("max ratio : " + CSV.to2dp(maxRatio));
-		}catch(Exception ex) {
-			ex.printStackTrace(); 
-		}
-		
+	public AvgDetector(int _longAvg, int _shortAvg) {
+		longAvg = _longAvg ;
+		shortAvg = _shortAvg ;
 	}
 	
-	public static void main(String args[]) throws Exception {
-	
-		File dir = Downloader.getRecentDirectory() ;
+
+	@Override
+	public boolean detect(CSV csv, int backDays) {
+
+		csv.setBaseDay(backDays);
 		
-//		run(new File(dir,"0015.csv")) ;
+		// ignore if too small
+		if(this.isMarketCapGreat(csv.getCode(), 200) == false) return false ;
+		if(csv.getLen() < 250) return false;
+		if(csv.max(0, 10, CSV.VOL) < 0.1) return false;
+
+//		if(debug) Log.log("file:" + file.getAbsolutePath());
+
+		double l = csv.avg(0, longAvg, CSV.ADJ_CLOSE) ;
+		double s = csv.avg(0, shortAvg, CSV.ADJ_CLOSE) ;
 		
-		for(File file : dir.listFiles()) {
-			run(file) ;
-		}
+		return s > l ;
+	}
+
+	@Override
+	public String getName() {
+		return "Long short Avg " ;
+	}
+
+	@Override
+	public String getDesc() {
+		return " ~ long : "+longAvg+" short : " + shortAvg;
 	}
 }

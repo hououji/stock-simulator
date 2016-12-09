@@ -15,9 +15,8 @@ public class VolumeSpecialDetector extends Detector{
 
 	double x = 1 ;
 	
-	public boolean detect(File file, int baseDay) {
+	public boolean detect(CSV csv, int baseDay) {
 		try{
-			CSV csv = new CSV(file) ;
 			csv.setBaseDay(baseDay);
 			
 			// ignore if too small
@@ -55,7 +54,7 @@ public class VolumeSpecialDetector extends Detector{
 	}
 	
 	public String getDesc() {
-		return " - volume out of S.D. : " + x ; 
+		return " ~ (4 days avg. vol) < (250 days avg - " + x + " * s.d. " ; 
 	}
 	
 	public static void main(String args[]) throws Exception {

@@ -42,10 +42,18 @@ public class Clustering {
 				double v[] = new double[dayBack] ;
 				String code = csv.getCode() ;
 				for(int i=0; i<dayBack; i++) {
+					// 1
 //					v[i] = (csv.get(i, CSV.ADJ_CLOSE) - csv.get(i+1, CSV.ADJ_CLOSE)) /  csv.get(i+1, CSV.ADJ_CLOSE)  * 100;
+					
+					// 2 MACD
 					double a5 = csv.avg(i, 5, CSV.ADJ_CLOSE) ;
 					double a20 = csv.avg(i, 20, CSV.ADJ_CLOSE) ;
 					v[i] = (a5 - a20) / a20 * 100;
+					
+					// 3 Linear normalize
+//					double min = csv.min(0, 250, CSV.ADJ_CLOSE) ;
+//					double max = csv.max(0, 250, CSV.ADJ_CLOSE) ;
+//					v[i] = csv.get(i, CSV.ADJ_CLOSE) ;
 				}
 				
 				DenseInstance i = new DenseInstance(v,code) ;
