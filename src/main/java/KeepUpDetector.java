@@ -15,7 +15,8 @@ public class KeepUpDetector extends Detector{
 
 	static boolean debug = false;
 
-	private int avgDay = 10;
+	private int longAvg = 20 ;
+	private int avgDay = 5;
 	private int keepUpDay = 15;
 	private int marketCap = 200 ;
 	
@@ -33,9 +34,9 @@ public class KeepUpDetector extends Detector{
 
 			for(int i = keepUpDay; i>=0; i--){
 				double avg = csv.avg(i, avgDay, CSV.ADJ_CLOSE) ;
-				double avgYesterday = csv.avg(i + 1, avgDay, CSV.ADJ_CLOSE) ;
+				double avgLong = csv.avg(i, longAvg, CSV.ADJ_CLOSE) ;
 				
-				if(avgYesterday > avg) {
+				if(avgLong > avg) {
 					return false; // fail
 				}
 			}
@@ -58,18 +59,19 @@ public class KeepUpDetector extends Detector{
 	@Override
 	public String getDesc() {
 		// TODO Auto-generated method stub
-		return "avg:"+avgDay+",keep up:" + keepUpDay + ",market cap:" + marketCap;
+		return "avg:"+avgDay+"/"+longAvg+",keep up:" + keepUpDay + ",market cap:" + marketCap;
 	}
 	
 	public static void main(String args[]) throws Exception {
 		usage() ;
 		KeepUpDetector d = new KeepUpDetector() ;
-		int keepUpDay = Integer.parseInt(args[1]) ;
+		d.avgDay = Integer.parseInt(args[0]) ;
+		d.longAvg = Integer.parseInt(args[1]) ;
+		int keepUpDay = Integer.parseInt(args[2]) ;
+		d.marketCap = Integer.parseInt(args[3]) ;
 		while(keepUpDay > 0) {
 			Log.log("keepUpDay : "  +keepUpDay) ;
-			d.avgDay = Integer.parseInt(args[0]) ;
 			d.keepUpDay = keepUpDay;
-			d.marketCap = Integer.parseInt(args[2]) ;
 			int size = d.makeHtml();
 			if(size > 5) break;
 			keepUpDay -- ;
@@ -77,7 +79,7 @@ public class KeepUpDetector extends Detector{
 	}
 	
 	private static void usage() {
-		System.err.println("Usage : <avgDay> <keepUpDay> <market cap>");
+		System.err.println("Usage : <avgDay> <longAvgDay> <keepUpDay> <market cap>");
 	}
 
 }

@@ -1,3 +1,5 @@
+import info.hououji.Log;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -58,11 +60,15 @@ public abstract class Detector {
 		String title = this.getName() ;
 		StringBuffer content = new StringBuffer() ;
 		for(int i=0; i<codes.size(); i++ ) {
-			String code = codes.get(i) ;
-			int keepDay = keepDays.get(i) ;
-			Aastock aa = new Aastock(code) ;
-			content.append("<div stock='"+code+"'><div class='title'>"+code+aa.getName()+",PE:"+aa.getPe()
-					+",Int:"+aa.getInt()+",Cap:"+aa.getMarketCap()+"億, "+keepDay+" days</div></div>\r\n") ;
+			try{
+				String code = codes.get(i) ;
+				int keepDay = keepDays.get(i) ;
+				Aastock aa = new Aastock(code) ;
+				content.append("<div stock='"+code+"'><div class='title'>"+code+aa.getName()+",PE:"+aa.getPe()
+						+",Int:"+aa.getInt()+",Cap:"+aa.getMarketCap()+"億, "+keepDay+" days</div></div>\r\n") ;
+			}catch(Exception ex){
+				Log.log(ex.toString());
+			}
 		}
 		template = template.replace("#HEADER#", header + this.getDesc()) ;
 		template = template.replace("#TITLE#", title) ;
