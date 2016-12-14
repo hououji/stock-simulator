@@ -27,7 +27,7 @@ public abstract class Detector {
 	
 	public abstract String getDesc() ;
 	
-	public void makeHtml() throws IOException{
+	public int makeHtml() throws IOException{
 		File dir = Downloader.getRecentDirectory() ;
 		
 //		run(new File(dir,"0015.csv")) ;
@@ -75,6 +75,8 @@ public abstract class Detector {
 		IOUtils.write(template, out);
 		out.flush();
 		out.close() ;
+		
+		return codes.size() ;
 	}
 	
 	protected double sd(List<Double> list) {
