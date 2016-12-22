@@ -17,6 +17,7 @@ public class CSV {
 	
 	List<String> dates = new ArrayList<String>() ;
 	List<double[]> dataList = new ArrayList<double[]>() ;
+	File file ;
 	String name = "" ;
 	String code = "" ;
 	int baseDay = 0 ;
@@ -79,17 +80,20 @@ public class CSV {
 	}
 	public double get(int num, int type) {
 		if(type < 100) {
-			return  dataList.get(num +  + baseDay)[type] ;
+			return  dataList.get(num + baseDay)[type] ;
 		}
 		if(type == VOL_PRICE) {
 			return get(num,VOL) * get(num,ADJ_CLOSE) ;
 		}
 		throw new RuntimeException("NO such CSV field type : " + type) ;
 	}
-	
-	public CSV(File file) 
+	public File getFile() {
+		return this.file ;
+	}
+	public CSV(File _file) 
 	{
 		try{
+			file = _file;
 			name = file.getName() ;
 			code = name.substring(0, 4) ;
 			BufferedReader r = new BufferedReader(new FileReader(file)) ;
@@ -115,12 +119,28 @@ public class CSV {
 	
 	public static void main(String args[]) throws Exception {
 		CSV csv = new CSV( new File(Downloader.getRecentDirectory(), "0002.csv")) ;
+		System.out.println(csv.getFile().getAbsolutePath());
 		for(int i=0; i<10; i++) {
 			System.out.println("5 avg ("+i+") : " + csv.avg(i, 5, VOL)) ;
 		}
 		for(int i=0; i<10; i++) {
 			System.out.println(csv.getDate(i) + " " + csv.get(i, VOL_PRICE)+ " " + csv.get(i, VOL)+ " " + to2dp(csv.get(i,ADJ_CLOSE)) ) ;
 		}
+		
+		for(int i=0; i<5; i++){
+			csv.setBaseDay(i);
+			for(int j=0; j<5; j++) {
+				System.out.println( "baseDay"+i+",num:"+j+":\t" + csv.get(j, CSV.ADJ_CLOSE) ) ;
+			}
+		}
+
+		for(int i=0; i<5; i++){
+			csv.setBaseDay(i);
+			for(int j=0; j<5; j++) {
+				System.out.println( "[AVG ]baseDay"+i+",num:"+j+":\t" + csv.avg(j, 5, CSV.ADJ_CLOSE) ) ;
+			}
+		}
+
 		
 	}
 	
