@@ -63,7 +63,7 @@ public abstract class Detector {
 			try{
 				String code = codes.get(i) ;
 				int keepDay = keepDays.get(i) ;
-				Aastock aa = new Aastock(code) ;
+				Detail aa = new Detail(code) ;
 				content.append("<div stock='"+code+"'><div class='title'>"+code+aa.getName()+",PE:"+aa.getPe()
 						+",Int:"+aa.getInt()+",Cap:"+aa.getMarketCap()+"億, "+keepDay+" days</div></div>\r\n") ;
 			}catch(Exception ex){

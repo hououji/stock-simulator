@@ -12,13 +12,16 @@ import java.util.StringTokenizer;
 import org.apache.commons.io.IOUtils;
 
 
-public class Aastock {
+public class Detail {
 
 	String html = "" ;
 	
 	String code = "" ;
 	
-	public Aastock(String code) {
+	public float pb = -1 ;
+	public float dividendyield = 0 ;
+	
+	public Detail(String code) {
 		InputStream in = null;
 		this.code = code ;
 		try{
@@ -44,7 +47,6 @@ public class Aastock {
 		return 0 ;
 	}
 
-	
 	public String getPe() {
 		int i1 = html.indexOf("市盈率") ;
 		i1 = html.indexOf(">", i1) ;
@@ -123,7 +125,11 @@ public class Aastock {
 	public String toString() {
 		return code + "," +this.getName() +","+ this.getMarketCap() + "," + this.getVol()
 				+","+this.getPe()+","+this.getInt()
-				+","+this.getClose() + "," +this.getHist52w() ;
+				+","+this.getClose() + "," +this.getHist52w() 
+				+"," + pb + "," + this.dividendyield;
+	}
+	public static String title() {
+		return "code,name,cap,vol,pe,div,close,w52hw,pb(yahoo),div(yahoo)" ;
 	}
 	
 	public static void main(String args[]) throws Exception {
@@ -142,7 +148,7 @@ public class Aastock {
 		for(File file : files) {
 			try{
 				String code = Downloader.getName(file) ;
-				Aastock a = new Aastock(code) ;
+				Detail a = new Detail(code) ;
 				out.println(a.toString()) ;
 				System.out.println(a.toString());
 				out.flush(); 

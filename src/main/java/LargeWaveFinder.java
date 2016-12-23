@@ -61,7 +61,7 @@ public class LargeWaveFinder {
 		for(int i=0; i<codes.size(); i++ ) {
 			try{
 				String code = codes.get(i) ;
-				Aastock aa = new Aastock(code) ;
+				Detail aa = new Detail(code) ;
 				content.append("<div stock='"+code+"'><div class='title'>"+code+aa.getName()+",PE:"+aa.getPe()
 						+",Int:"+aa.getInt()+",Cap:"+aa.getMarketCap()+"億</div></div>\r\n") ;
 			}catch(Exception ex){}
