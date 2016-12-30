@@ -1,4 +1,4 @@
-package info.hououji;
+package info.hououji.sim;
 
 /**
  * Hello world!

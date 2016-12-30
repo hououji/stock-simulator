@@ -1,4 +1,4 @@
-package info.hououji;
+package info.hououji.sim;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

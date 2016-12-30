@@ -1,4 +1,5 @@
-import info.hououji.Log;
+package info.hououji.sim;
+import info.hououji.sim.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;

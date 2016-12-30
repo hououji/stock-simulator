@@ -1,3 +1,4 @@
+package info.hououji.sim;
 import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;

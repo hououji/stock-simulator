@@ -1,4 +1,5 @@
-import info.hououji.Log;
+package info.hououji.sim;
+import info.hououji.sim.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -27,7 +28,7 @@ public class LowPriceDetector extends Detector{
 			// ignore if too small
 //			if(csv.get(0, CSV.VOL_PRICE) < 100000000) return false;
 //			if(marketCap.get(csv.getCode()) == null || marketCap.get(csv.getCode()) < 200) return false;
-			if(this.isMarketCapGreat(csv.getCode(), 200) == false) return false ;
+			if(this.isMarketCapGreat(csv.getCode(), 10) == false) return false ;
 			if(csv.getLen() < backDays + 250) return false;
 			if(csv.max(0, 10, CSV.VOL) < 0.1) return false;
 			

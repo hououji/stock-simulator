@@ -1,4 +1,4 @@
-package info.hououji;
+package info.hououji.sim;
 
 import java.io.BufferedReader;
 import java.io.File;
