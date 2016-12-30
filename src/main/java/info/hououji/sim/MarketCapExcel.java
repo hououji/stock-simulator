@@ -21,7 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 
 
 public class MarketCapExcel {
-	// code,name,cap,vol,pe,div,close,w52hw,pb(yahoo),div(yahoo)
+	// "code,name,cap,vol,pe,pb,div,earn,nav,w52h,w52l"
 	class Row {
 		String code ;
 		String name ;
@@ -29,9 +29,12 @@ public class MarketCapExcel {
 		double pe = 0;
 		double div = 0 ;
 		double pb = 0 ;
+		double earn = 0 ;
+		double nav = 0;
 		
 		public String toString() {
-			return "code:"+code+",name:"+name+",cap:"+cap+",pe:"+pe+",pb:"+pb+",div:"+div ;
+			return "code:"+code+",name:"+name+",cap:"+cap+",pe:"+pe+",pb:"+pb+",div:"+div 
+					+",earn:"+earn+",nav:"+nav;
 		}
 	}
 	
@@ -41,28 +44,27 @@ public class MarketCapExcel {
 		marketCap = new LinkedHashMap<String,Row>() ;
 		try{
 			BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream("output/market_cap.csv"), "utf8") );
+			in.readLine() ; // parse first line, it is title
 			while(true) {
 				try{
 					String line = in.readLine() ;
 					if(line == null) break;
 					line = line.replace("\uFEFF", "");
 					
-					//code,name,cap,vol,pe,div,close,w52hw,pb(yahoo),div(yahoo)
+					//code,name,cap,vol,pe,pb,div,earn,nav,close,w52h,w52l
 					Row r = new Row() ;
 					StringTokenizer st = new StringTokenizer(line, ",") ;
-					String code = st.nextToken() ; // code
-					r.code = code; 
+					r.code = st.nextToken() ; // code 
 					r.name = st.nextToken() ; // name
 					r.cap = parseDouble(st.nextToken()) ; //cap
 					st.nextToken(); // vol
 					r.pe = parseDouble(st.nextToken()) ;// pe
+					r.pb = parseDouble(st.nextToken()) ; // pb
 					r.div = parseDouble(st.nextToken()) ;// div
-					parseDouble(st.nextToken()) ;// close
-					parseDouble(st.nextToken()) ;// w52hw
-					r.pb = parseDouble(st.nextToken()) ;
+					r.earn = parseDouble(st.nextToken()) ;// earn
+					r.nav = parseDouble(st.nextToken()) ;// nav
 					
-					
-					marketCap.put(code, r) ;
+					marketCap.put(r.code, r) ;
 //					System.out.println(code + " " + cap);
 				}catch(Exception ex){
 				}
@@ -75,7 +77,7 @@ public class MarketCapExcel {
 	
 	private double parseDouble(String s) {
 		try{
-			return Double.parseDouble(s) ;
+			return Double.parseDouble(s.replaceAll("%", "")) ;
 		}catch(Exception ex){
 			System.out.println("fail to parse:" + s) ;
 			return 0;
@@ -132,38 +134,38 @@ public class MarketCapExcel {
 		
 		// Get supp. info from Yahoo, 100 for One batch, since yahoo will block IP, for > 200 request 1 day
 		String[] codes =details.keySet().toArray(new String[0]) ;
-		for(int i=0; i<codes.length; i=i+100) {
-			try {
-				List<String> batch = new ArrayList<String>() ;
-				for(int j=i; j<codes.length && j<i+100; j++ ) {
-					batch.add(codes[j] + ".HK") ;
-				}
-				String s = "http://finance.yahoo.com/d/quotes.csv?s=" + StringUtils.join(batch.toArray(new String[0]), "+")  + "&f=sp6y";
-				System.out.println(s);
-				URL url = new URL(s) ;
-				InputStream in = url.openStream() ; 
-				String csv = IOUtils.toString(in) ;
-				BufferedReader br = new BufferedReader(new StringReader(csv)) ;
-				while(true) {
-					try{
-						String line = br.readLine() ;
-						if(line == null) break;
-						StringTokenizer stok = new StringTokenizer(line, ",") ;
-						String code = stok.nextToken() ;
-						Detail d = details.get(code.substring(1, 5)) ;
-						if(d==null) continue;
-						d.pb = Float.parseFloat(stok.nextToken()) ;
-						d.dividendyield = Float.parseFloat(stok.nextToken()) ;
-					}catch(Exception ex)
-					{
-						ex.printStackTrace(); 
-					}
-				}
-				Thread.sleep(1000);
-			}catch(Exception ex) {
-				ex.printStackTrace(); 
-			}
-		}
+//		for(int i=0; i<codes.length; i=i+100) {
+//			try {
+//				List<String> batch = new ArrayList<String>() ;
+//				for(int j=i; j<codes.length && j<i+100; j++ ) {
+//					batch.add(codes[j] + ".HK") ;
+//				}
+//				String s = "http://finance.yahoo.com/d/quotes.csv?s=" + StringUtils.join(batch.toArray(new String[0]), "+")  + "&f=sp6y";
+//				System.out.println(s);
+//				URL url = new URL(s) ;
+//				InputStream in = url.openStream() ; 
+//				String csv = IOUtils.toString(in) ;
+//				BufferedReader br = new BufferedReader(new StringReader(csv)) ;
+//				while(true) {
+//					try{
+//						String line = br.readLine() ;
+//						if(line == null) break;
+//						StringTokenizer stok = new StringTokenizer(line, ",") ;
+//						String code = stok.nextToken() ;
+//						Detail d = details.get(code.substring(1, 5)) ;
+//						if(d==null) continue;
+////						d.pb = Float.parseFloat(stok.nextToken()) ;
+////						d.dividendyield = Float.parseFloat(stok.nextToken()) ;
+//					}catch(Exception ex)
+//					{
+//						ex.printStackTrace(); 
+//					}
+//				}
+//				Thread.sleep(1000);
+//			}catch(Exception ex) {
+//				ex.printStackTrace(); 
+//			}
+//		}
 		
 		OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream("output/market_cap.csv"),"utf8") ;
 		PrintWriter out = new PrintWriter(osw) ;
