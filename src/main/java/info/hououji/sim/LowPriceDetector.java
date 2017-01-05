@@ -1,13 +1,8 @@
 package info.hououji.sim;
-import info.hououji.sim.Log;
+import info.hououji.sim.MarketCapExcel.Row;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 
 public class LowPriceDetector extends Detector{
@@ -43,6 +38,9 @@ public class LowPriceDetector extends Detector{
 			double avg18 = csv.avg(0, 18, CSV.ADJ_CLOSE) ; 
 			double avg4 = csv.avg(0, 4, CSV.ADJ_CLOSE) ;
 			if(avg4 < avg18) return false ;
+			
+			Row row = this.getRow(csv.getCode()) ;
+			if( ! (row.pb < 0.8 || row.div > 4)) return false;// it must has something 'good' to prevent too more 
 			
 			// pass
 			Log.log(csv.getName() + ", adf cls:" + csv.to2dp(csv.get(0, CSV.ADJ_CLOSE)) +", ex:" + csv.to2dp(csv.get(0, CSV.VOL_PRICE)));

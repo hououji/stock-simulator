@@ -18,10 +18,18 @@ import org.jsoup.select.Elements;
 
 public class Detail {
 
-	String html = "" ;
-	Document doc ;
-	
 	String code = "" ;
+	double marketCap ;
+	double pe ;
+	double div ;
+	double close;
+	String name = "";
+	String vol = "";
+	double p52wl ;
+	double p52wh ;
+	double pb;
+	double nav;
+	double earn;
 	
 //	public float pb = -1 ;
 //	public float dividendyield = 0 ;
@@ -32,6 +40,9 @@ public class Detail {
 		InputStream in = null;
 		this.code = code ;
 		try{
+			String html = "" ;
+			Document doc ;
+			
 //			URL url = new URL("http://www.aastocks.com/tc/mobile/Quote.aspx?symbol=0" + code) ;
 //			URL url = new URL("http://www.aastocks.com/tc/stocks/quote/detail-quote.aspx?symbol=0" + code) ;
 			URL url = new URL("http://www.quamnet.com/Quote.action?stockCode=" + code) ;
@@ -43,183 +54,178 @@ public class Detail {
 			html = IOUtils.toString(in) ;
 			doc = Jsoup.parse(html ) ;
 //			System.out.println(html) ;
+			
+			Elements es ;
+			
+			es = getElements(doc,"市值");
+			for(Element e :es) {
+				try{
+					this.marketCap  = trim(Double.parseDouble(e.html().replaceAll(",", "").replaceAll("B", "")) * 10) ;
+					break;
+				}catch(Exception ex){
+					ex.printStackTrace();
+				}
+			}
+			
+			
+			es = getElements(doc,"市盈率");
+			for(Element e :es) {
+				try{
+					this.pe = parseDouble(e.html().replaceAll("%", "")) ;
+					break;
+				}catch(Exception ex){
+					ex.printStackTrace();
+				}
+			}
+			
+			es = getElements(doc,"週息率");
+			for(Element e :es) {
+				try{
+					div = parseDouble(e.html().replaceAll("%", "")) ;
+					break;
+				}catch(Exception ex){
+					ex.printStackTrace();
+				}
+			}
+			
+			es = doc.select("div:contains(現價) + div") ;
+			for(Element e :es) {
+				try{
+					close = parseDouble(e.html()) ;
+					break;
+				}catch(Exception ex){
+					ex.printStackTrace();
+				}
+			}
+			
+			es = doc.select("#chartAnnouncement a.content_lt_blue_link") ;
+			for(Element e :es) {
+				String name = e.html() ;
+				if(name == null) continue;
+				name = name.trim() ;
+				if("".equals(name)) continue;
+				int idx = name.indexOf("(") ;
+				if(idx == -1) {
+					this.name = name ;
+					break;
+				}
+				this.name = name.substring(0,idx) ;
+				break;
+			}
+			
+			es = doc.select("div:contains(成交額) + div") ;
+			for(Element e :es) {
+				try{
+					vol = e.html() ;
+					break;
+				}catch(Exception ex){
+					ex.printStackTrace();
+				}
+			}
+			
+			es = doc.select("div:contains(52週高位) + div") ;
+			for(Element e :es) {
+				try{
+					this.p52wh =  parseDouble(e.html()) ;
+					break;
+				}catch(Exception ex){
+					ex.printStackTrace();
+				}
+			}
+			
+			es = doc.select("div:contains(52週低位) + div") ;
+			for(Element e :es) {
+				try{
+					this.p52wl = parseDouble(e.html()) ;
+					break;
+				}catch(Exception ex){
+					ex.printStackTrace();
+				}
+			}
+			
+			es = getElements(doc,"市賬率");
+			for(Element e :es) {
+				try{
+					String s = e.html();
+					this.pb =  parseDouble(e.html()) ;
+					break;
+				}catch(Exception ex){
+					ex.printStackTrace();
+				}
+			}
+			
+			es = getElements(doc,"每股淨值");
+			for(Element e :es) {
+				try{
+					this.nav = parseDouble(e.html()) ;
+				}catch(Exception ex){
+					ex.printStackTrace();
+				}
+			}
+			
+			es = getElements(doc,"每股盈利");
+			for(Element e :es) {
+				try{
+					this.earn = parseDouble(e.html()) ;
+					break;
+				}catch(Exception ex){
+					ex.printStackTrace();
+				}
+			}
+			
 		}catch(Exception ex){
 			throw new RuntimeException(ex) ;
 		}finally{
 			IOUtils.closeQuietly(in);
 		}
 	}
-	
-	public void writeToFile() {
-		try{
-			PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream("./output/detail.html"),"utf-8")) ;
-			out.print(html) ;
-			out.flush();
-			out.close();
-		}catch(Exception ex){
-			ex.printStackTrace(); 
-		}
-	}
-	
-	public void readFromFile() {
-		try{
-			BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream("./output/detail.html"), "utf-8"));
-			html = IOUtils.toString(in) ;
-			doc = Jsoup.parse(html ) ;
-		}catch(Exception ex){
-			ex.printStackTrace();
-		}
-	}
-	
-	private Elements getElements(String s) {
+
+	private Elements getElements(Document doc, String s ) {
 		return doc.select("#chartSummaryLeft td:contains("+s+") + td span") ;
 	}
 	
 	public double getMarketCap() {
-		Elements es = getElements("市值");
-		for(Element e :es) {
-			try{
-				return Double.parseDouble(e.html().replaceAll(",", "").replaceAll("B", "")) * 10 ;
-			}catch(Exception ex){
-				ex.printStackTrace();
-			}
-		}
-		return 0;
+		return this.marketCap ;
 	}
 
 	public double getPe() {
-		Elements es = getElements("市盈率");
-		for(Element e :es) {
-			try{
-				return Double.parseDouble(e.html().replaceAll("%", "")) ;
-			}catch(Exception ex){
-				ex.printStackTrace();
-			}
-		}
-		return 0;
+		return this.pe ;
 	}
 
-	public double getInt() {
-		Elements es = getElements("週息率");
-		for(Element e :es) {
-			try{
-				return Double.parseDouble(e.html().replaceAll("%", "")) ;
-			}catch(Exception ex){
-				ex.printStackTrace();
-			}
-		}
-		return 0;
+	public double getDiv() {
+		return this.div ;
 	}
 	
 	public double getClose() {
-		Elements es = doc.select("div:contains(現價) + div") ;
-		for(Element e :es) {
-			try{
-				return Double.parseDouble(e.html()) ;
-			}catch(Exception ex){
-				ex.printStackTrace();
-			}
-		}
-		return 0;
+		return this.close ;
 	}
 	
 	public String getName() {
-		Elements es = doc.select("#chartAnnouncement a.content_lt_blue_link") ;
-		for(Element e :es) {
-			String name = e.html() ;
-			if(name == null) continue;
-			name = name.trim() ;
-			if("".equals(name)) continue;
-			int idx = name.indexOf("(") ;
-			if(idx == -1) return name ;
-			return name.substring(0,idx) ;
-		}
-		return "" ;
+		return this.name ;
 	}
 	
 	public String getVol() {
-		
-		Elements es = doc.select("div:contains(成交額) + div") ;
-		for(Element e :es) {
-			try{
-				return e.html() ;
-			}catch(Exception ex){
-				ex.printStackTrace();
-			}
-		}
-		return "";
+		return this.vol ;
 	}
 	
-//	public String getHist52w() {
-//		int i1 = html.indexOf("52週波幅") ;
-//		i1 = html.indexOf(">", i1) ;
-//		int i2 = html.indexOf("<", i1) ;
-//		if(i1 > 0 && i2 > 0) {
-//			String s = html.substring(i1+1, i2) ;
-//			return s ;
-//		}
-//		return "" ;
-//	}
-	
 	public double get52wh() {
-		Elements es = doc.select("div:contains(52週高位) + div") ;
-		for(Element e :es) {
-			try{
-				return Double.parseDouble(e.html()) ;
-			}catch(Exception ex){
-				ex.printStackTrace();
-			}
-		}
-		return 0;
+		return this.p52wh ;
 	}
 
 	public double get52wl() {
-		Elements es = doc.select("div:contains(52週低位) + div") ;
-		for(Element e :es) {
-			try{
-				return Double.parseDouble(e.html()) ;
-			}catch(Exception ex){
-				ex.printStackTrace();
-			}
-		}
-		return 0;
+		return this.p52wl ;
 	}
 	
 	public double getPb() {
-		Elements es = getElements("市賬率");
-		for(Element e :es) {
-			try{
-//				System.out.println(">>>" + e.html() + "<<<") ;
-				return Double.parseDouble(e.html()) ;
-			}catch(Exception ex){
-				ex.printStackTrace();
-			}
-		}
-		return 0;
+		return this.pb;
 	}
 
 	public double getNav() {
-		Elements es = getElements("每股淨值");
-		for(Element e :es) {
-			try{
-				return Double.parseDouble(e.html()) ;
-			}catch(Exception ex){
-				ex.printStackTrace();
-			}
-		}
-		return 0;
+		return this.nav ;
 	}
 	
 	public double getEarn() {
-		Elements es = getElements("每股盈利");
-		for(Element e :es) {
-			try{
-				return Double.parseDouble(e.html()) ;
-			}catch(Exception ex){
-				ex.printStackTrace();
-			}
-		}
-		return 0;
+		return this.earn ;
 	}
 	
 	private static float decode(String s) {
@@ -237,7 +243,7 @@ public class Detail {
 				+","+this.getPe()
 				
 				+"," + this.getPb() 
-				+","+this.getInt()
+				+","+this.getDiv()
 				+"," + this.getEarn()
 				+"," + this.getNav()
 				+"," + this.getClose()
@@ -251,13 +257,23 @@ public class Detail {
 		return "code,name,cap,vol,pe,pb,div,earn,nav,close,w52h,w52l" ;
 	}
 	
+	public static double parseDouble(String s) {
+		double d = Double.parseDouble(s) ;
+		return trim(d) ;
+	}
+	public static double trim(double d) {
+		if(d > 100) return Math.round(d) ;
+		return Math.round(d * 100) / 100d ;
+	}
+	
 	public static void main(String args[]) throws Exception {
 //		Detail d = new Detail("0005") ;
 //		d.writeToFile();
 		
-		Detail d = new Detail() ;
-		d.readFromFile();
+		Detail d = new Detail("0005") ;
 		System.out.println(d.getPb()) ;
+		System.out.println(d.getPe()) ;
+		System.out.println(d.getDiv()) ;
 		System.out.println(d.getMarketCap()) ;
 		System.out.println(d.getName()) ;
 		System.out.println(d.getClose()) ;

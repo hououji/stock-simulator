@@ -1,20 +1,14 @@
 package info.hououji.sim;
-import info.hououji.sim.Log;
+import info.hououji.sim.MarketCapExcel.Row;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
@@ -23,6 +17,7 @@ import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 public abstract class Detector {
 	
 	Helper h = new Helper(); 
+	MarketCapExcel excel = new MarketCapExcel() ; 
 	
 	public abstract boolean detect(CSV csv, int backDays) ;
 	
@@ -65,8 +60,9 @@ public abstract class Detector {
 				String code = codes.get(i) ;
 				int keepDay = keepDays.get(i) ;
 				Detail aa = new Detail(code) ;
-				content.append("<div stock='"+code+"'><div class='title'>"+code+aa.getName()+",PE:"+aa.getPe()
-						+",Int:"+aa.getInt()+",Cap:"+aa.getMarketCap()+"億, "+keepDay+" days</div></div>\r\n") ;
+				content.append("<div stock='"+code+"'><div class='title'>"+code+aa.getName()
+						+",PE:"+aa.getPe() +",PB:"+aa.getPb()
+						+",Int:"+aa.getDiv()+",Cap:"+aa.getMarketCap()+"億, "+keepDay+" days</div></div>\r\n") ;
 			}catch(Exception ex){
 				Log.log(ex.toString());
 			}
@@ -97,5 +93,9 @@ public abstract class Detector {
 	
 	protected boolean isMarketCapGreat(String code, int i) {
 		return h.isMarketCapGreat(code,i) ;
+	}
+	
+	protected Row getRow(String code) {
+		return excel.getRow(code) ;
 	}
 }

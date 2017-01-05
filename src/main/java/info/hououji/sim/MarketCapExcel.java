@@ -22,7 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class MarketCapExcel {
 	// "code,name,cap,vol,pe,pb,div,earn,nav,w52h,w52l"
-	class Row {
+	static class Row {
 		String code ;
 		String name ;
 		double cap ; // in x 100,000,000
@@ -38,9 +38,9 @@ public class MarketCapExcel {
 		}
 	}
 	
-	Map<String, Row> marketCap = null ;
+	static Map<String, Row> marketCap = null ;
 	
-	private synchronized void initMarketCap() {
+	private static synchronized void initMarketCap() {
 		marketCap = new LinkedHashMap<String,Row>() ;
 		try{
 			BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream("output/market_cap.csv"), "utf8") );
@@ -75,7 +75,7 @@ public class MarketCapExcel {
 		}
 	}
 	
-	private double parseDouble(String s) {
+	private static double parseDouble(String s) {
 		try{
 			return Double.parseDouble(s.replaceAll("%", "")) ;
 		}catch(Exception ex){

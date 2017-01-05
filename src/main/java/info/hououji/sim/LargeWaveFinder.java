@@ -64,7 +64,7 @@ public class LargeWaveFinder {
 				String code = codes.get(i) ;
 				Detail aa = new Detail(code) ;
 				content.append("<div stock='"+code+"'><div class='title'>"+code+aa.getName()+",PE:"+aa.getPe()
-						+",Int:"+aa.getInt()+",Cap:"+aa.getMarketCap()+"億</div></div>\r\n") ;
+						+",Int:"+aa.getDiv()+",Cap:"+aa.getMarketCap()+"億</div></div>\r\n") ;
 			}catch(Exception ex){}
 		}
 		template = template.replace("#HEADER#", header + ", period:" + period) ;
