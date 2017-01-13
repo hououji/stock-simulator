@@ -12,6 +12,10 @@ import java.util.StringTokenizer;
 
 public class CSV {
 
+	public static int OPEN = 0 ;
+	public static int HIGH = 1 ;
+	public static int LOW = 2 ;
+	public static int CLOSE = 3 ;
 	public static int VOL = 4 ;
 	public static int ADJ_CLOSE = 5 ;
 	public static int VOL_PRICE = 100 ;

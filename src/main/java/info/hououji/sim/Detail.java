@@ -60,7 +60,13 @@ public class Detail {
 			es = getElements(doc,"市值");
 			for(Element e :es) {
 				try{
-					this.marketCap  = trim(Double.parseDouble(e.html().replaceAll(",", "").replaceAll("B", "")) * 10) ;
+					String s = e.html() ;
+					if(s.indexOf("B") > 0) {
+						this.marketCap  = trim(Double.parseDouble(e.html().replaceAll(",", "").replaceAll("B", "")) * 10) ;
+					}
+					if(s.indexOf("M") > 0) {
+						this.marketCap  = trim(Double.parseDouble(e.html().replaceAll(",", "").replaceAll("M", "")) / 100) ;
+					}
 					break;
 				}catch(Exception ex){
 					ex.printStackTrace();
@@ -270,18 +276,18 @@ public class Detail {
 //		Detail d = new Detail("0005") ;
 //		d.writeToFile();
 		
-		Detail d = new Detail("0005") ;
-		System.out.println(d.getPb()) ;
-		System.out.println(d.getPe()) ;
-		System.out.println(d.getDiv()) ;
-		System.out.println(d.getMarketCap()) ;
-		System.out.println(d.getName()) ;
-		System.out.println(d.getClose()) ;
-		System.out.println(d.getVol()) ;
-		System.out.println(d.get52wh()) ;
-		System.out.println(d.get52wl()) ;
-		System.out.println(d.getNav()) ;
-		System.out.println(d.getEarn()) ;
+		Detail d = new Detail("0068") ;
+		System.out.println("PB: " + d.getPb()) ;
+		System.out.println("PE: " + d.getPe()) ;
+		System.out.println("Div:"+d.getDiv()) ;
+		System.out.println("Cap:"+d.getMarketCap()) ;
+		System.out.println("Name:"+d.getName()) ;
+		System.out.println("Close:"+d.getClose()) ;
+		System.out.println("Vol:"+d.getVol()) ;
+		System.out.println("52H:"+d.get52wh()) ;
+		System.out.println("52L:"+d.get52wl()) ;
+		System.out.println("NAV:"+d.getNav()) ;
+		System.out.println("Earn:"+d.getEarn()) ;
 		
 		
 //		Document doc = Jsoup.parse(d.html ) ;
