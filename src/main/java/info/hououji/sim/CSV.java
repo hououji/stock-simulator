@@ -83,6 +83,14 @@ public class CSV {
 	public String getDate(int num) {
 		return dates.get(num + baseDay) ;
 	}
+	
+	public int getItemNumFromDate(String date) {
+		for(int i=0; i<dates.size(); i++) {
+			if(dates.get(i).equals(date)) return i;
+		}
+		return -1 ;
+	}
+	
 	public double get(int num, int type) {
 		if(type < 100) {
 			return  dataList.get(num + baseDay)[type] ;
@@ -95,8 +103,14 @@ public class CSV {
 	public File getFile() {
 		return this.file ;
 	}
-	public CSV(File _file) 
-	{
+	
+	public CSV(String code) {
+		File dir = Downloader.getRecentDirectory() ;
+		File file = new File(dir,code + ".csv" ) ;
+		init(file); 
+	}
+	
+	private void init(File _file){
 		try{
 			file = _file;
 			name = file.getName() ;
@@ -120,6 +134,12 @@ public class CSV {
 		}catch(Exception ex){
 			throw new RuntimeException(ex) ;
 		}
+		
+	}
+	
+	public CSV(File _file) 
+	{
+		init(_file);
 	}
 	
 	public static void main(String args[]) throws Exception {
