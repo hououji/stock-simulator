@@ -2,19 +2,25 @@ package info.hououji.sim;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class WaveAnalysis {
 	
-	public static void main(String args[]) throws Exception {
-		
-		File file = new File(Downloader.getRecentDirectory(), "0175.csv") ;
+	static class Result{
+		public Date start, end ;
+		public double startP, endP ;
+		public int change;
+	}
+	
+	public static List<Result> exec(File file) throws Exception {
 		CSV csv = new CSV(file) ;
-		int rangeStart = csv.getItemNumFromDate("2010-01-01") ;
+		String code = csv.getCode() ;
+		int rangeStart = csv.getItemNumFromDate("2012-01-02") ;
 		int rangeEnd = csv.getItemNumFromDate("2017-01-02") ;
+		if(rangeStart == -1 || rangeEnd == -1) return null ;
 		double minChange = 0.2 ;
 		
 		int wStart=-1, wEnd=-1 ;
@@ -22,6 +28,7 @@ public class WaveAnalysis {
 		int uptrade = 0;
 		
 		Map<Integer, Integer> allDateResult = new HashMap<Integer, Integer>() ;
+		List<Result> results = new ArrayList<Result>() ;
 		
 		// 1) Start, find the first trade
 		int curr;
@@ -54,7 +61,7 @@ public class WaveAnalysis {
 					wEnd = csv.getItemNumFromDate(maxDate) ;
 				}
 				
-				System.out.println("uptrade:" + uptrade + "," + csv.getDate(wEnd));
+//				System.out.println("uptrade:" + uptrade + "," + csv.getDate(wEnd));
 				
 				break; 
 			}
@@ -62,7 +69,7 @@ public class WaveAnalysis {
 		
 		if(uptrade == 0) {
 			System.out.println("Initial fail") ;
-			return ;
+			return null;
 		}
 		
 		// 2) run to trade change
@@ -85,9 +92,17 @@ public class WaveAnalysis {
 				}
 				
 				int rate = (int)((wStartP - wEndP) / wStartP *  -1 * 100) ;
-				System.out.println("start:" + csv.getDate(wStart) + "," + csv.get(wStart, CSV.CLOSE) 
-						+ ",end:" + csv.getDate(wEnd) + "," + csv.get(wEnd, CSV.CLOSE)
-						+ "change:" + rate)  ;
+//				System.out.println("start:" + csv.getDate(wStart) + "," + csv.get(wStart, CSV.CLOSE) 
+//						+ ",end:" + csv.getDate(wEnd) + "," + csv.get(wEnd, CSV.CLOSE)
+//						+ "change:" + rate)  ;
+				
+				Result r = new Result() ;
+				r.start = CSV.sdf.parse(csv.getDate(wStart)) ;
+				r.end = CSV.sdf.parse(csv.getDate(wEnd)) ;
+				r.startP = csv.get(wStart, CSV.CLOSE) ;
+				r.endP = csv.get(wEnd, CSV.CLOSE) ;
+				r.change = rate;
+				results.add(r) ;
 				
 				uptrade = uptrade * -1 ;
 				wStartP = wEndP ;
@@ -98,6 +113,8 @@ public class WaveAnalysis {
 			
 		}
 		
+		return results;
+		
 //		System.out.println("\n\n - All Dates --") ;
 //		List<Integer> dateList = new ArrayList<Integer>() ;
 //		dateList.addAll(allDateResult.keySet()) ;
@@ -105,7 +122,34 @@ public class WaveAnalysis {
 //		for(int i : dateList) {
 //			System.out.println(csv.getDate(i) +"\t"+ csv.get(i, CSV.CLOSE) + "\tuptrand:" + allDateResult.get(i));
 //		}
-		
-		
+	}
+	
+	public static void main(String args[]) throws Exception {
+		File[] files = Downloader.getRecentDirectory().listFiles() ;
+		MarketCapExcel excel = new MarketCapExcel() ;
+		for(File file : files) {
+			try{
+				CSV csv = new CSV(file) ;
+				if(!excel.isMarketCapGreat(csv.getCode(), 200)) continue ;
+				
+				List<Result> results = exec(file) ;
+				if(results == null) continue;
+				int years[] = {2016, 2015, 2014, 2013} ;
+				boolean pass = true;
+				for(int year : years) {
+					int count = 0 ;
+					for(Result r: results) {
+						if(r.start.getYear() + 1900 == year ){
+							count ++ ;
+						}
+					}
+					if(count < 2) pass = false;
+				}
+				if(pass) System.out.println(file.getName() + " cap:" + excel.getRow(csv.getCode()).cap);
+			}catch(Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+
 	}
 }

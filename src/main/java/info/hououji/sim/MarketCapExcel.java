@@ -53,16 +53,17 @@ public class MarketCapExcel {
 					
 					//code,name,cap,vol,pe,pb,div,earn,nav,close,w52h,w52l
 					Row r = new Row() ;
-					StringTokenizer st = new StringTokenizer(line, ",") ;
-					r.code = st.nextToken() ; // code 
-					r.name = st.nextToken() ; // name
-					r.cap = parseDouble(st.nextToken()) ; //cap
-					st.nextToken(); // vol
-					r.pe = parseDouble(st.nextToken()) ;// pe
-					r.pb = parseDouble(st.nextToken()) ; // pb
-					r.div = parseDouble(st.nextToken()) ;// div
-					r.earn = parseDouble(st.nextToken()) ;// earn
-					r.nav = parseDouble(st.nextToken()) ;// nav
+//					StringTokenizer st = new StringTokenizer(line, ",") ;
+					String sp[] = line.split(",") ;
+					r.code = sp[0] ; // code 
+					r.name = sp[1] ; // name
+					r.cap = parseDouble(sp[2]) ; //cap
+//					st.nextToken(); // vol
+					r.pe = parseDouble(sp[4]) ;// pe
+					r.pb = parseDouble(sp[5]) ; // pb
+					r.div = parseDouble(sp[6]) ;// div
+					r.earn = parseDouble(sp[7]) ;// earn
+					r.nav = parseDouble(sp[8]) ;// nav
 					
 					marketCap.put(r.code, r) ;
 //					System.out.println(code + " " + cap);
@@ -77,7 +78,12 @@ public class MarketCapExcel {
 	
 	private static double parseDouble(String s) {
 		try{
-			return Double.parseDouble(s.replaceAll("%", "")) ;
+			if("不適用".equals(s)) return 0 ;
+			s = s.replaceAll("%", "").trim() ;
+			if(s.endsWith("K")) return Double.parseDouble(s.substring(0, s.length()-1)) * 1000 ;
+			if(s.endsWith("M")) return Double.parseDouble(s.substring(0, s.length()-1)) * 1000 * 1000 ;
+			if(s.endsWith("B")) return Double.parseDouble(s.substring(0, s.length()-1)) * 1000 * 1000 * 1000 ;
+			return Double.parseDouble(s) ;
 		}catch(Exception ex){
 			System.out.println("fail to parse:" + s) ;
 			return 0;
