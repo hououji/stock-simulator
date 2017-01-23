@@ -88,7 +88,7 @@ public class CSV {
 		for(int i=0; i<dates.size(); i++) {
 			if(dates.get(i).equals(date)) return i;
 		}
-		return -1 ;
+		throw new RuntimeException("No such date:" + date) ;
 	}
 	
 	public double get(int num, int type) {
