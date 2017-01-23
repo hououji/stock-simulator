@@ -183,6 +183,12 @@ public class EtnetRemainValue {
 		File[] files = dir.listFiles() ;
 		Arrays.sort(files);
 		List<String> codes = new ArrayList<String>() ;
+		
+		System.out.println("code" 
+				+ "\tday:" 
+				+ "\tlow:" 
+				+ "\tps 0.1 remain:");
+
 		for(File file : files) {
 			try{
 				String code = file.getName().substring(0,4) ;
@@ -208,9 +214,9 @@ public class EtnetRemainValue {
 				if(dayCount > 0) {
 					double lowest = csv.min(i2, i1-i2 + 1, CSV.LOW) ;
 					System.out.println(code 
-							+ "\tday:" + dayCount 
-							+ "\tlow:" + Misc.trim(lowest)
-							+ "\tps 0.1 remain:" + Misc.trim(remain2015)) ;
+							+ "\t" + dayCount 
+							+ "\t"+ Misc.df3.format(lowest)
+							+ "\t"+ Misc.df3.format(remain2015)) ;
 				}
 				
 //				System.out.println("code:" + code + ",remain:" + remain2015 + ",year avg:" + csv.avg(i2, (i1-i2), CSV.CLOSE )) ;

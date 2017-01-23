@@ -22,6 +22,19 @@ public class Misc {
       return output ;
 	}
 	
+	public static DecimalFormat df3 = new DecimalFormat("#.###") ; 
+	
+	public static double trim(double d, int sf) {
+		for(int i=0; i<sf; i++) {
+			d = d * 10 ;
+		}
+		d = Math.round(d) ;
+		for(int i=0; i<sf; i++) {
+			d = d / 10 ;
+		}
+		return d;
+	}
+	
 	public static double trim(double d) {
 		if(d > 100) return Math.round(d) ;
 		return Math.round(d * 100) / 100d ;
