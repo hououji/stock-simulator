@@ -89,8 +89,8 @@ public class EtnetRemainValue {
 			{
 				try{
 					Elements es = doc.select("tr:contains(營業額 / 收益) td") ;
-					sales2015 = parseDouble(es.get(3).html());
-					sales2014 = parseDouble(es.get(4).html());
+					sales2015 = parseDouble(es.get(3).html()) * 1000;
+					sales2014 = parseDouble(es.get(4).html()) * 1000;
 				}catch(Exception ex) {
 				}
 			}
@@ -102,8 +102,8 @@ public class EtnetRemainValue {
 					pureIncomeFull2014 = parseDouble(es.get(4).html());
 					
 					es = doc.select("tr:contains(每股盈利 ) td") ;
-					pureIncomeShare2015 = parseDouble(es.get(3).html()) * 100;
-					pureIncomeShare2014 = parseDouble(es.get(4).html()) * 100;
+					pureIncomeShare2015 = parseDouble(es.get(3).html()) / 100;
+					pureIncomeShare2014 = parseDouble(es.get(4).html()) / 100;
 					totalShare2015 = pureIncomeFull2015 * 1000 / pureIncomeShare2015;
 					totalShare2014 = pureIncomeFull2014 * 1000 / pureIncomeShare2014;
 					
@@ -183,6 +183,12 @@ public class EtnetRemainValue {
 		File[] files = dir.listFiles() ;
 		Arrays.sort(files);
 		List<String> codes = new ArrayList<String>() ;
+		
+		System.out.println("code" 
+				+ "\tday:" 
+				+ "\tlow:" 
+				+ "\tps 0.1 remain:");
+
 		for(File file : files) {
 			try{
 				String code = file.getName().substring(0,4) ;
@@ -190,19 +196,30 @@ public class EtnetRemainValue {
 				EtnetRemainValue ehi = new EtnetRemainValue(code) ;
 				
 				double remain2015 = ehi.sales2015 / ehi.totalShare2015 * 0.1 ; 
-						
+				
+//				System.out.println(code + ",total share:" + ehi.totalShare2015 + ", sale:" + ehi.sales2015) ;
+				
 				CSV csv = new CSV(code) ;
 				int i1 = csv.getItemNumFromDate("2015-01-01") ;
 				int i2 = csv.getItemNumFromDate("2016-03-30") ;
+				int dayCount = 0 ;
 				for(int i=i1; i>=i2; i--) {
 					if(csv.get(i,CSV.LOW) < remain2015) {
-						System.out.println(code + ",date:" + csv.getDate(i) 
-								+ ",low:" + csv.get(i, CSV.LOW)
-								+ ",remain:" + Misc.trim(remain2015) + "");
+//						System.out.println(code + ",date:" + csv.getDate(i) 
+//								+ ",low:" + csv.get(i, CSV.LOW)
+//								+ ",remain:" + Misc.trim(remain2015) + "");
+						dayCount ++ ;
 					}
 				}
+				if(dayCount > 0) {
+					double lowest = csv.min(i2, i1-i2 + 1, CSV.LOW) ;
+					System.out.println(code 
+							+ "\t" + dayCount 
+							+ "\t"+ Misc.df3.format(lowest)
+							+ "\t"+ Misc.df3.format(remain2015)) ;
+				}
 				
-				System.out.println("code:" + code + ",remain:" + remain2015 + ",year avg:" + csv.avg(i2, (i1-i2), CSV.CLOSE )) ;
+//				System.out.println("code:" + code + ",remain:" + remain2015 + ",year avg:" + csv.avg(i2, (i1-i2), CSV.CLOSE )) ;
 				
 			}catch(Exception ex) {
 				//ex.printStackTrace();

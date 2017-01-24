@@ -26,6 +26,9 @@ public class EtnetHistIncome {
 	double iChange;
 	double earn2015;
 	double earn2014;
+	double goss2014;
+	double goss2015;
+	Double gossChange = null;
 
 	public EtnetHistIncome(String code) {
 		this.code = code ;
@@ -57,8 +60,22 @@ public class EtnetHistIncome {
 				
 				earn2015 = parseDouble(earn2015s.replaceAll(",", "")) / 100 ;
 				earn2014 = parseDouble(earn2014s.replaceAll(",", "")) / 100 ;
+				
 			}
-			
+
+			try
+			{
+				Elements es = doc.select("tr:contains(毛利) td") ;
+				String goss2015s = es.get(3).html() ;
+				String goss2014s = es.get(4).html() ;
+				
+				goss2015 = parseDouble(goss2015s.replaceAll(",", "")) / 100 ;
+				goss2014 = parseDouble(goss2014s.replaceAll(",", "")) / 100 ;
+				gossChange = (goss2015-goss2014) / goss2014 ;
+			}catch(Exception ex) {
+				
+			}
+
 			
 		}catch(Exception ex	){
 //			ex.printStackTrace();
@@ -141,6 +158,7 @@ public class EtnetHistIncome {
 				if(		ehi.iChange > 0.40 
 						&& (peg1 < 0.2 || peg2 < 0.2)
 						&& (pe1 < 7.9 || pe2 < 7.9)
+						&& ( ehi.gossChange == null || ehi.gossChange > 0.2 )
 				){
 					System.out.println(code 
 							+"\tpe:" + Misc.trim(pe1) + "," + Misc.trim(pe2) 
@@ -148,6 +166,7 @@ public class EtnetHistIncome {
 							+ "\tchange:" + Misc.trim(ehi.iChange) 
 							+ "\tearn:" + Misc.formatMoney(ehi.i2015)
 							+ "\tearn/share:" + Misc.trim(ehi.earn2015)
+							+ "\tgoss/c:" + (ehi.gossChange !=null?Misc.trim(ehi.gossChange):"--")
 					) ;
 				}
 				

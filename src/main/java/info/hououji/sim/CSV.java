@@ -166,7 +166,12 @@ public class CSV {
 				System.out.println( "[AVG ]baseDay"+i+",num:"+j+":\t" + csv.avg(j, 5, CSV.ADJ_CLOSE) ) ;
 			}
 		}
-
+		System.out.println("open:" + csv.get(0, CSV.OPEN)
+							+ ",high:" + csv.get(0, CSV.HIGH)
+							+ ",low:" + csv.get(0, CSV.LOW)
+							+ ",close:" + csv.get(0, CSV.CLOSE)
+				) ;
+		System.out.println("min low (50 day) : " + csv.min(0, 50, CSV.LOW)) ;
 		
 	}
 	
