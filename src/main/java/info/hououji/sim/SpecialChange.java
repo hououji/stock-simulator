@@ -12,10 +12,10 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 
-public class SpecialRunaway {
+public class SpecialChange {
 
 	static int period = 55 ;
-	static double gap = 9 ;
+	static double rate = 40 ;
 	
 	public static String check(CSV csv) {
 		if(csv.getLen() < 5 * 250) return null;
@@ -24,9 +24,9 @@ public class SpecialRunaway {
 		
 		csv.setBaseDay(0);
 		for(int i=period; i>0; i--) {
-			double oldHigh = csv.get(i+1, CSV.HIGH) ;
-			double newLow = csv.get(i, CSV.LOW) ;
-			if( (newLow - oldHigh) / oldHigh > gap ) return csv.getDate(i+1) ;
+			double lowClose = csv.min(i, 5, CSV.LOW) ;
+			double maxHigh = csv.max(i, 5, CSV.HIGH) ;
+			if( maxHigh > lowClose * (1+rate / 100) ) return csv.getDate(i+1) ;
 		}
 		
 		return null;
@@ -35,18 +35,18 @@ public class SpecialRunaway {
 	
 	public static void main(String args[]) throws Exception {
 		
-		System.out.println("Usage SpecialRunaway <period> <gap>");
+		System.out.println("Usage SpecialChange <period> <rate>");
 		
 		period = Integer.parseInt(args[0]) ;
-		gap = Double.parseDouble(args[1]) ;
+		rate = Double.parseDouble(args[1]) ;
 		
 		File dir = Downloader.getRecentDirectory() ;
 		File[] files = dir.listFiles() ;
 		Arrays.sort(files);
 		
 		String template = Misc.getFile("list-template.html") ;
-		String header = new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " - " + "Special Runaway" + " period:"  + period + ",gap:" + gap;
-		String title = "Special Runaway" ;
+		String header = new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " - " + "Special Change" + " period:"  + period + ",rate:" + rate;
+		String title = "Special Change" ;
 		StringBuffer content = new StringBuffer() ;
 
 		MarketCapExcel mc = new MarketCapExcel() ;
@@ -91,7 +91,7 @@ public class SpecialRunaway {
 		File outputDir = new File("output") ;
 		outputDir.mkdirs() ;
 		
-		FileOutputStream out = new FileOutputStream(new File(outputDir,  "special-runaway" + ".html")) ;
+		FileOutputStream out = new FileOutputStream(new File(outputDir,  "special-change" + ".html")) ;
 		IOUtils.write(template, out);
 		out.flush();
 		out.close() ;

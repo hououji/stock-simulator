@@ -74,10 +74,13 @@ public abstract class Detector {
 		File outputDir = new File("output") ;
 		outputDir.mkdirs() ;
 		
-		FileOutputStream out = new FileOutputStream(new File(outputDir,  this.getName() + ".html")) ;
+		File outFile = new File(outputDir,  this.getName() + ".html") ;
+		FileOutputStream out = new FileOutputStream(outFile) ;
 		IOUtils.write(template, out);
 		out.flush();
 		out.close() ;
+		
+		System.out.println("output:" + outFile.getAbsolutePath()) ;
 		
 		return codes.size() ;
 	}

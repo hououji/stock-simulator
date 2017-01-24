@@ -15,13 +15,13 @@ public class WaveAnalysis {
 		public int change;
 	}
 	
-	public static List<Result> exec(File file) throws Exception {
+	public static List<Result> exec(File file, double minChange, boolean debug) throws Exception {
 		CSV csv = new CSV(file) ;
 		String code = csv.getCode() ;
-		int rangeStart = csv.getItemNumFromDate("2012-01-02") ;
+		int rangeStart = csv.getItemNumFromDate("2009-01-02") ;
+//		int rangeStart = csv.getItemNumFromDate("2012-01-02") ;
 		int rangeEnd = csv.getItemNumFromDate("2017-01-02") ;
 		if(rangeStart == -1 || rangeEnd == -1) return null ;
-		double minChange = 0.2 ;
 		
 		int wStart=-1, wEnd=-1 ;
 		double wStartP = -1, wEndP = -1 ;
@@ -92,9 +92,11 @@ public class WaveAnalysis {
 				}
 				
 				int rate = (int)((wStartP - wEndP) / wStartP *  -1 * 100) ;
-//				System.out.println("start:" + csv.getDate(wStart) + "," + csv.get(wStart, CSV.CLOSE) 
-//						+ ",end:" + csv.getDate(wEnd) + "," + csv.get(wEnd, CSV.CLOSE)
-//						+ "change:" + rate)  ;
+				if(debug) {
+					System.out.println("start:" + csv.getDate(wStart) + "," + csv.get(wStart, CSV.CLOSE) 
+							+ ",end:" + csv.getDate(wEnd) + "," + csv.get(wEnd, CSV.CLOSE)
+							+ ",change:" + rate)  ;
+				}
 				
 				Result r = new Result() ;
 				r.start = CSV.sdf.parse(csv.getDate(wStart)) ;
@@ -132,7 +134,7 @@ public class WaveAnalysis {
 				CSV csv = new CSV(file) ;
 				if(!excel.isMarketCapGreat(csv.getCode(), 200)) continue ;
 				
-				List<Result> results = exec(file) ;
+				List<Result> results = exec(file, 0.2, false) ;
 				if(results == null) continue;
 				int years[] = {2016, 2015, 2014, 2013} ;
 				boolean pass = true;
