@@ -16,17 +16,30 @@ public class SpecialRunaway {
 
 	static int period = 55 ;
 	static double gap = 9 ;
+	static double change = 40 ;
 	
 	public static String check(CSV csv) {
 		if(csv.getLen() < 5 * 250) return null;
 		MarketCapExcel excel = new MarketCapExcel() ;
-		if(excel.getRow(csv.getCode()).cap < 50 ) return null ;
+		if(excel.getRow(csv.getCode()).cap < 20 ) return null ;
 		
 		csv.setBaseDay(0);
-		for(int i=period; i>0; i--) {
+		for(int i=0; i<=period; i++) {
 			double oldHigh = csv.get(i+1, CSV.HIGH) ;
 			double newLow = csv.get(i, CSV.LOW) ;
-			if( (newLow - oldHigh) / oldHigh > gap ) return csv.getDate(i+1) ;
+			double oldClose = csv.get(i+1, CSV.LOW) ;
+			double newHigh = csv.get(i, CSV.HIGH) ;
+			
+			double oldAdj = csv.get(i+1, CSV.ADJ_CLOSE) ;
+			double newAdj = csv.get(i, CSV.ADJ_CLOSE) ;
+			
+			if( (newLow - oldHigh) / oldHigh > gap 
+				&& newHigh > oldClose * (1 + change/100)
+				&& newAdj > oldAdj * (1 + change/100 * 0.3)
+			){
+				System.out.println("code:" + csv.getCode() + " date:" + csv.getDate(i) + ",old adj:" + oldAdj + ",new Adj:" + newAdj); 
+				return csv.getDate(i+1) ;
+			}
 		}
 		
 		return null;
@@ -35,10 +48,15 @@ public class SpecialRunaway {
 	
 	public static void main(String args[]) throws Exception {
 		
-		System.out.println("Usage SpecialRunaway <period> <gap>");
+		System.out.println("Usage SpecialRunaway <period> <gap> <change(optional)>");
 		
 		period = Integer.parseInt(args[0]) ;
 		gap = Double.parseDouble(args[1]) ;
+		if(args.length >= 3) {
+			change = Double.parseDouble(args[2]) ;
+		}else{
+			change = gap;
+		}
 		
 		File dir = Downloader.getRecentDirectory() ;
 		File[] files = dir.listFiles() ;
@@ -56,7 +74,7 @@ public class SpecialRunaway {
 				
 				String date = check(csv);
 				if(date != null){
-					System.out.println("code:" + csv.getCode());
+//					System.out.println("code:" + csv.getCode());
 					String code = Downloader.getName(file) ;
 
 					Row r = mc.getRow(code) ;

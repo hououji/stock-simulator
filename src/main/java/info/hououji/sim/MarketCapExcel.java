@@ -132,7 +132,7 @@ public class MarketCapExcel {
 				System.out.println("aa:"+code) ;
 				Detail a = new Detail(code) ;
 				details.put(code, a) ;
-				Thread.sleep(1000);
+//				Thread.sleep(1000);
 			}catch(Exception ex){
 				ex.printStackTrace(); 
 			}
@@ -173,7 +173,9 @@ public class MarketCapExcel {
 //			}
 //		}
 		
-		OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream("output/market_cap.csv"),"utf8") ;
+		File file = new File("output/market_cap.csv") ;
+		file.getParentFile().mkdirs() ;
+		OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(file),"utf8") ;
 		PrintWriter out = new PrintWriter(osw) ;
 		out.print("\uFEFF"); // BOM, make Excel auto use UTF8
 		out.println(Detail.title());

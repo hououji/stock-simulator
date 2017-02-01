@@ -16,6 +16,27 @@ public class Misc {
 		}
 	}
 	
+	public static double parseDouble(String str) {
+		try{
+			str = str.trim().replaceAll(",", "") ;
+			int sign = 1 ;
+			if(str.startsWith("(") && str.endsWith(")")) {
+				sign = -1 ;
+				str = str.substring(1, str.length() - 1) ;
+			}
+			double m = 1;
+			if(str.endsWith("%")) {
+				str = str.substring(0, str.length() -1) ;
+				m = 0.01 ;
+			}
+			return Double.parseDouble(str) * sign * m;
+		}catch(Exception ex) {
+			System.out.println("parseDouble exception:" + str) ;
+			ex.printStackTrace();
+		}
+		return 0;
+	}
+	
 	public static String formatMoney(double d) {
       DecimalFormat myFormatter = new DecimalFormat("###,###,###");
       String output = myFormatter.format(d);
@@ -42,5 +63,24 @@ public class Misc {
 
 	public static void main(String args[]){
 		System.out.println(getFile("list-template.html")) ;
+	}
+	public static int len(String s) {
+		if(s == null) return 0 ;
+		int len = 0 ; 
+		for(char c : s.toCharArray()) {
+			int i = (int) 0xffff&c ;
+			if(c > 128) {
+				len += 2 ;
+			}else{
+				len ++ ;
+			}
+		}
+		return len ;
+	}
+	public static String pad(String s,int w) {
+		while(len(s) < w) {
+			s = s + ' ' ;
+		}
+		return s; 
 	}
 }
