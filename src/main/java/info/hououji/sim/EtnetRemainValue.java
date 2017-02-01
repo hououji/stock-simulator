@@ -1,5 +1,7 @@
 package info.hououji.sim;
 
+import info.hououji.sim.util.CachedDownload;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -47,9 +49,8 @@ public class EtnetRemainValue {
 			String html = "" ;
 			Document doc ;
 
-			File file = new File(getDirectory(), code + ".html") ;
-			BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file),"utf-8")) ;
-			html = IOUtils.toString(in) ;
+			URL url = new URL("http://www.etnet.com.hk/www/tc/stocks/realtime/quote_ci_pl.php?code=" + code) ;
+			html = CachedDownload.getString(url, CachedDownload.PREFIX_QUARTERLY) ;
 			doc = Jsoup.parse(html ) ;
 			
 			{
@@ -126,40 +127,35 @@ public class EtnetRemainValue {
 		return Double.parseDouble(s) ;
 	}
 
-	public static File getDirectory() {
-		return new File("fix-data/etnet-income"); 
-	}
+//	public static File getDirectory() {
+//		return new File("fix-data/etnet-income"); 
+//	}
+//	
+//	public static void download() {
+//		File dir = Downloader.getRecentDirectory() ;
+//		File[] files = dir.listFiles() ;
+//		Arrays.sort(files);
+//		for(File file : files) {
+//			try{
+//				String code = file.getName().substring(0,4) ;
+//				System.out.println("code:" + code) ;
+//				URL url = new URL("http://www.etnet.com.hk/www/tc/stocks/realtime/quote_ci_pl.php?code=" + code) ;
+//				URLConnection hc = null ;
+//				hc = url.openConnection() ;
+//				hc.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
+//				String html = IOUtils.toString(hc.getInputStream()) ;
+//				File outfile = new File(getDirectory(), code + ".html") ;
+//				outfile.getParentFile().mkdirs() ;
+//				PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(outfile), "utf-8")) ;
+//				out.println(html);
+//				out.flush();
+//				out.close();
+//			}catch(Exception ex) {
+//				ex.printStackTrace();
+//			}
+//		}
+//	}
 	
-	public static void download() {
-		File dir = Downloader.getRecentDirectory() ;
-		File[] files = dir.listFiles() ;
-		Arrays.sort(files);
-		for(File file : files) {
-			try{
-				String code = file.getName().substring(0,4) ;
-				System.out.println("code:" + code) ;
-				URL url = new URL("http://www.etnet.com.hk/www/tc/stocks/realtime/quote_ci_pl.php?code=" + code) ;
-				URLConnection hc = null ;
-				hc = url.openConnection() ;
-				hc.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
-				String html = IOUtils.toString(hc.getInputStream()) ;
-				File outfile = new File(getDirectory(), code + ".html") ;
-				outfile.getParentFile().mkdirs() ;
-				PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(outfile), "utf-8")) ;
-				out.println(html);
-				out.flush();
-				out.close();
-			}catch(Exception ex) {
-				ex.printStackTrace();
-			}
-		}
-	}
-	
-	public static void main1(String args[]) throws Exception {
-		download() ;
-		System.out.println("FIN") ;
-	}
-
 	public static void main2(String args[]) throws Exception {
 		EtnetHistIncome e = new EtnetHistIncome("0062") ;
 		System.out.println(Misc.formatMoney(e.i2014)) ;
@@ -168,14 +164,6 @@ public class EtnetRemainValue {
 		
 	}
 	public static void main(String args[]) throws Exception {
-		
-		System.out.println(" -- start -- ");
-		
-		if(args.length >= 1) {
-			if("d".equals(args[0])) {
-				download() ;
-			}
-		}
 		
 		System.out.println(" -- calc -- ");
 		
