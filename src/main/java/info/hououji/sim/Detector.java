@@ -25,6 +25,55 @@ public abstract class Detector {
 	
 	public abstract String getDesc() ;
 	
+	public int makeHtml(int backDay) throws IOException{
+		File dir = Downloader.getRecentDirectory() ;
+		
+		File[] files = dir.listFiles() ;
+		Arrays.sort(files);
+		List<String> codes = new ArrayList<String>() ;
+		for(File file : files) {
+			CSV csv = new CSV(file) ;
+			if(detect(csv,backDay)){
+				String code = Downloader.getName(file) ;
+				codes.add(code) ;
+			}
+		}
+		
+		// make html
+		String template = Misc.getFile("list-template.html") ;
+		String header = new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " - " + this.getName()  ;
+		String title = this.getName() ;
+		StringBuffer content = new StringBuffer() ;
+		for(int i=0; i<codes.size(); i++ ) {
+			try{
+				String code = codes.get(i) ;
+				Detail aa = new Detail(code) ;
+				content.append("<div stock='"+code+"'><div class='title'>"+code+aa.getName()
+						+",PE:"+aa.getPe() +",PB:"+aa.getPb()
+						+",Int:"+aa.getDiv()+",Cap:"+aa.getMarketCap()+"億, </div></div>\r\n") ;
+			}catch(Exception ex){
+				Log.log(ex.toString());
+			}
+		}
+		template = template.replace("#HEADER#", header + this.getDesc()) ;
+		template = template.replace("#TITLE#", title) ;
+		template = template.replace("#CONTENT#", content) ;
+		
+		File outputDir = new File("output") ;
+		outputDir.mkdirs() ;
+		
+		File outFile = new File(outputDir,  this.getName() + ".html") ;
+		FileOutputStream out = new FileOutputStream(outFile) ;
+		IOUtils.write(template, out);
+		out.flush();
+		out.close() ;
+		
+		System.out.println("output:" + outFile.getAbsolutePath()) ;
+		
+		return codes.size() ;
+
+	}
+	
 	public int makeHtml() throws IOException{
 		File dir = Downloader.getRecentDirectory() ;
 		

@@ -15,6 +15,7 @@ import org.jsoup.select.Elements;
 public class EtnetHistIncome {
 
 	String code;
+	String name;
 	String currency;
 	double currRate ;
 	int unit;
@@ -86,6 +87,12 @@ public class EtnetHistIncome {
 			URL url = new URL("http://www.etnet.com.hk/www/tc/stocks/realtime/quote_ci_pl.php?code=" + code) ;
 			html = CachedDownload.getString(url) ;
 			doc = Jsoup.parse(html ) ;
+			
+			
+			name = doc.select("#QuoteNameA").text() ;
+			if(name.indexOf(" ") >= 0) {
+				name = name.substring(name.indexOf(" ")).trim() ;
+			}
 			
 			Elements trs = doc.select("table.figureTable tr") ;
 			{
@@ -160,7 +167,11 @@ public class EtnetHistIncome {
 		return Double.parseDouble(s) ;
 	}
 
-
+	public static void main(String args[]) throws Exception {
+		EtnetHistIncome ehi = new EtnetHistIncome("0040") ;
+		System.out.println(ehi.name) ;
+		System.out.println(ehi.dataset.toString()) ;
+	}
 	
 	public static void main2(String args[] ) throws Exception {
 		File dir = Downloader.getRecentDirectory() ;

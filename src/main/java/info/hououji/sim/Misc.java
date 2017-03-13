@@ -1,8 +1,10 @@
 package info.hououji.sim;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.math.util.MathUtils;
 
 
 public class Misc {
@@ -18,6 +20,11 @@ public class Misc {
 	
 	public static double parseDouble(String str) {
 		try{
+			if(str.indexOf("N/A") != -1) return 0;
+			if(str.indexOf("不適用") != -1) return 0;
+			if(str.trim().equals("")) return 0;
+			if(str.indexOf("--") != -1) return 0;
+			
 			str = str.trim().replaceAll(",", "") ;
 			int sign = 1 ;
 			if(str.startsWith("(") && str.endsWith(")")) {
@@ -46,14 +53,16 @@ public class Misc {
 	public static DecimalFormat df3 = new DecimalFormat("#.###") ; 
 	
 	public static double trim(double d, int sf) {
-		for(int i=0; i<sf; i++) {
-			d = d * 10 ;
-		}
-		d = Math.round(d) ;
-		for(int i=0; i<sf; i++) {
-			d = d / 10 ;
-		}
-		return d;
+		
+		return MathUtils.round(d, sf, BigDecimal.ROUND_HALF_UP) ;
+//		for(int i=0; i<sf; i++) {
+//			d = d * 10 ;
+//		}
+//		d = Math.round(d) ;
+//		for(int i=0; i<sf; i++) {
+//			d = d / 10 ;
+//		}
+//		return d;
 	}
 	
 	public static double trim(double d) {

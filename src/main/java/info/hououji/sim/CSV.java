@@ -92,6 +92,10 @@ public class CSV {
 		return -1 ;
 	}
 	
+	public int getItemNumFromDate(Date date) {
+		return getItemNumFromDate(sdf.format(date)) ;
+	}
+	
 	public double get(int num, int type) {
 		if(type < 100) {
 			return  dataList.get(num + baseDay)[type] ;
