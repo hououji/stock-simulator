@@ -20,8 +20,8 @@ public class WaveAnalysis {
 		String code = csv.getCode() ;
 		int count = 0 ;
 //		int rangeStart = csv.getItemNumFromDate("2009-01-02") ;
-		int rangeStart = csv.getItemNumFromDate("2010-02-11") ;
-		int rangeEnd = csv.getItemNumFromDate("2017-03-10") ;
+		int rangeStart = csv.getLen() - 1;
+		int rangeEnd = 0;
 		if(rangeStart == -1 || rangeEnd == -1) return null ;
 		
 		int wStart=-1, wEnd=-1 ;
