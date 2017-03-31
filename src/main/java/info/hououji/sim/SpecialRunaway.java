@@ -21,6 +21,10 @@ public class SpecialRunaway {
 	public static String check(CSV csv) {
 		if(csv.getLen() < 5 * 250) return null;
 		MarketCapExcel excel = new MarketCapExcel() ;
+		if(excel.getRow(csv.getCode()) == null) {
+//			System.out.println("skip:" + csv.getCode()) ;
+			return null ;
+		}
 		if(excel.getRow(csv.getCode()).cap < 20 ) return null ;
 		
 		csv.setBaseDay(0);
@@ -33,11 +37,13 @@ public class SpecialRunaway {
 			double oldAdj = csv.get(i+1, CSV.ADJ_CLOSE) ;
 			double newAdj = csv.get(i, CSV.ADJ_CLOSE) ;
 			
+			double stockGap = (newLow - oldHigh) / oldHigh ;
+			
 			if( (newLow - oldHigh) / oldHigh > gap 
 //				&& newHigh > oldClose * (1 + change/100)
 //				&& newAdj > oldAdj * (1 + change/100 * 0.3)
 			){
-				System.out.println("code:" + csv.getCode() + " date:" + csv.getDate(i) + ",old adj:" + oldAdj + ",new Adj:" + newAdj); 
+				System.out.println("" + csv.getCode() + "," + csv.getDate(i) +  ",change:" + (int)((newHigh - oldClose)/oldClose * 100) + ",gap:" + (int)(stockGap*100)); 
 				return csv.getDate(i+1) ;
 			}
 		}
@@ -58,6 +64,8 @@ public class SpecialRunaway {
 			change = gap;
 		}
 		
+		System.out.println("period:" + period + ",gap:" + gap + ",change:" + change);
+		
 		File dir = Downloader.getRecentDirectory() ;
 		File[] files = dir.listFiles() ;
 		Arrays.sort(files);
@@ -71,6 +79,7 @@ public class SpecialRunaway {
 		for(File file : files) {
 			try{
 				CSV csv = new CSV(file) ;
+//				if( ! csv.getCode().equals("1668")) continue;
 				
 				String date = check(csv);
 				if(date != null){

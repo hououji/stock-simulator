@@ -264,7 +264,7 @@ public class Detail {
 	}
 	
 	public static double parseDouble(String s) {
-		double d = Double.parseDouble(s) ;
+		double d = Misc.parseDouble(s) ;
 		return trim(d) ;
 	}
 	public static double trim(double d) {
@@ -276,7 +276,7 @@ public class Detail {
 //		Detail d = new Detail("0005") ;
 //		d.writeToFile();
 		
-		Detail d = new Detail("0068") ;
+		Detail d = new Detail("0342") ;
 		System.out.println("PB: " + d.getPb()) ;
 		System.out.println("PE: " + d.getPe()) ;
 		System.out.println("Div:"+d.getDiv()) ;

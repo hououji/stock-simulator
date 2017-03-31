@@ -7,12 +7,61 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class WaveAnalysis {
+public class WaveAnalysisHsi {
 	
 	static class Result{
 		public Date start, end ;
 		public double startP, endP ;
 		public int change;
+		public int uptrade = 0;
+	}
+	
+	public static void trendCheck(File file, List<Result> list) {
+		CSV csv = new CSV(file) ;
+		double lastOpt = 0 ;
+		double localOpt ;
+		for(Result r : list) {
+//			int rangeStart = csv.getItemNumFromDate("2009-01-02") ;
+			int rangeStart = csv.getItemNumFromDate(r.start) ;
+			int rangeEnd = csv.getItemNumFromDate(r.end) ;
+			
+			System.out.println(" == NEW trend ==") ;
+			
+			localOpt = (int)csv.get(rangeStart, CSV.ADJ_CLOSE) ;
+			for(int i = rangeStart; i>=rangeEnd; i--) {
+				
+				double curr = (int)csv.get(i, CSV.ADJ_CLOSE) ; 
+				
+				if(r.uptrade == 1) {
+					if( curr > localOpt) localOpt = curr ; 
+				}
+				if(r.uptrade == -1) {
+					if(curr < localOpt) localOpt = curr ; 
+				}
+				
+				double rate = Misc.trim(Math.abs(localOpt - curr) / curr, 3) ;
+				int diff = (int)(localOpt - curr) ;
+				
+				System.out.print(
+					r.uptrade 
+					+ "," + csv.getDate(i) 
+					+ "," + (int)curr 
+					+ ","+(int)localOpt
+					+ "," + diff
+					+ ","+ rate) ;
+				
+				if(lastOpt != 0) {
+					double lastRate = Misc.trim(Math.abs(curr - lastOpt) / curr, 3);
+					System.out.println("," + lastRate) ;
+					if(lastRate > 0.02) lastOpt = 0;
+				}else{
+					System.out.println(",-") ;
+				}
+			}
+			
+			lastOpt = localOpt; 
+			
+		}
 	}
 	
 	public static List<Result> exec(File file, double minChange, boolean debug) throws Exception {
@@ -20,8 +69,9 @@ public class WaveAnalysis {
 		String code = csv.getCode() ;
 		int count = 0 ;
 //		int rangeStart = csv.getItemNumFromDate("2009-01-02") ;
-		int rangeStart = csv.getLen() - 1;
-		int rangeEnd = 0;
+		int rangeStart = csv.getLen()-1;
+		int rangeEnd =  0;
+		System.out.println("start:" + csv.getDate(rangeStart) + ",end:" + csv.getDate(rangeEnd)) ;
 		if(rangeStart == -1 || rangeEnd == -1) return null ;
 		
 		int wStart=-1, wEnd=-1 ;
@@ -93,8 +143,9 @@ public class WaveAnalysis {
 				
 				int rate = (int)((wStartP - wEndP) / wStartP *  -1 * 100) ;
 				if(debug) {
-					System.out.println("start:" + csv.getDate(wStart) + "," + csv.get(wStart, CSV.CLOSE) 
-							+ ",end:" + csv.getDate(wEnd) + "," + csv.get(wEnd, CSV.CLOSE)
+					System.out.println("start:" + csv.getDate(wStart) 
+							+ "," + (int)csv.get(wStart, CSV.CLOSE) 
+							+ ",end:" + csv.getDate(wEnd) + "," + (int)csv.get(wEnd, CSV.CLOSE)
 							+ ",change:" + rate)  ;
 				}
 				
@@ -104,6 +155,7 @@ public class WaveAnalysis {
 				r.startP = csv.get(wStart, CSV.CLOSE) ;
 				r.endP = csv.get(wEnd, CSV.CLOSE) ;
 				r.change = rate;
+				r.uptrade = uptrade ;
 				results.add(r) ;
 				
 				uptrade = uptrade * -1 ;
@@ -130,32 +182,16 @@ public class WaveAnalysis {
 //		}
 	}
 	
+	public static int str2int(String s) {
+		return (int)Double.parseDouble(s);
+	}
+	
 	public static void main(String args[]) throws Exception {
-		File[] files = Downloader.getRecentDirectory().listFiles() ;
-		MarketCapExcel excel = new MarketCapExcel() ;
-		for(File file : files) {
-			try{
-				CSV csv = new CSV(file) ;
-				if(!excel.isMarketCapGreat(csv.getCode(), 200)) continue ;
-				
-				List<Result> results = exec(file, 0.2, false) ;
-				if(results == null) continue;
-				int years[] = {2016, 2015, 2014, 2013} ;
-				boolean pass = true;
-				for(int year : years) {
-					int count = 0 ;
-					for(Result r: results) {
-						if(r.start.getYear() + 1900 == year ){
-							count ++ ;
-						}
-					}
-					if(count < 2) pass = false;
-				}
-				if(pass) System.out.println(file.getName() + " cap:" + excel.getRow(csv.getCode()).cap);
-			}catch(Exception ex) {
-				ex.printStackTrace();
-			}
-		}
+		
+		File file = new File("C:/Users/hououji/git/stock-simulator/hsi.csv") ;
+		
+		List<Result> list = WaveAnalysisHsi.exec(file, 0.04, true) ;
+		trendCheck(file, list) ;
 
 	}
 }
