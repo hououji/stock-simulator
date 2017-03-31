@@ -34,8 +34,8 @@ public class SpecialRunaway {
 			double newAdj = csv.get(i, CSV.ADJ_CLOSE) ;
 			
 			if( (newLow - oldHigh) / oldHigh > gap 
-				&& newHigh > oldClose * (1 + change/100)
-				&& newAdj > oldAdj * (1 + change/100 * 0.3)
+//				&& newHigh > oldClose * (1 + change/100)
+//				&& newAdj > oldAdj * (1 + change/100 * 0.3)
 			){
 				System.out.println("code:" + csv.getCode() + " date:" + csv.getDate(i) + ",old adj:" + oldAdj + ",new Adj:" + newAdj); 
 				return csv.getDate(i+1) ;
