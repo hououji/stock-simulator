@@ -25,6 +25,7 @@ public class EtnetRemainValue {
 		while(true) {
 			String line = in.readLine() ;
 			if(line == null) break;
+			if(line.length() <4) continue;
 			oldCode.add(line.substring(0, 4)) ;
 		}
 		in.close();
@@ -54,7 +55,7 @@ public class EtnetRemainValue {
 					marketDate = new SimpleDateFormat("dd/MM/yyyy").parse(dateStr) ;
 					if( (new Date().getTime() - marketDate.getTime()) / (1000*60*60*24*356) < 3  ) isMoreThan3years = false; 
 				}catch(Exception ex){
-					ex.printStackTrace();
+					//ex.printStackTrace();
 				}
 				
 				System.out.println(Misc.formatMoney(e.dataset.getDouble("營業額", 0))) ;
@@ -143,6 +144,7 @@ public class EtnetRemainValue {
 				double min = csv.min(0, 1, CSV.ADJ_CLOSE) ;
 				EtnetHistRatio ehr = new EtnetHistRatio(code) ;
 				Detail d = new Detail(code) ;
+				if(d.stockSuspend) continue;
 				if( min < remain * 1.1 ){
 					String s = "";
 					if( ! oldCode.contains(code)) s = s + "(NEW:"+new SimpleDateFormat("yyyy-MM-dd").format(new Date())+")" ;

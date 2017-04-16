@@ -30,6 +30,7 @@ public class Detail {
 	double pb;
 	double nav;
 	double earn;
+	boolean stockSuspend = false ;
 	
 //	public float pb = -1 ;
 //	public float dividendyield = 0 ;
@@ -97,6 +98,7 @@ public class Detail {
 			es = doc.select("div:contains(現價) + div") ;
 			for(Element e :es) {
 				try{
+					if("停牌".equals(e.html())) this.stockSuspend = true;
 					close = parseDouble(e.html()) ;
 					break;
 				}catch(Exception ex){
