@@ -1,7 +1,5 @@
 package info.hououji.sim;
 
-import info.hououji.sim.util.CachedDownload;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -13,14 +11,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import info.hououji.sim.MarketCapExcel.Row;
-
 public class EtnetRemainValue {
 	
 	
 	public static void main(String args[]) throws Exception{
 		
 		Set<String> oldCode = new LinkedHashSet<String>() ;
+		Set<String> errorCode = new LinkedHashSet<String>() ;
 		BufferedReader in = new BufferedReader(new FileReader("old-code.txt")) ;
 		while(true) {
 			String line = in.readLine() ;
@@ -37,15 +34,15 @@ public class EtnetRemainValue {
 //		MarketCapExcel excels = new MarketCapExcel() ;
 		for(File file : files) {
 			String code = file.getName().substring(0,4) ;
-			if("0850".equals(code)) {
-				System.out.println("0850") ;
-			}
+			String name = "" ;
 			try{
 				CSV csv = new CSV(file) ;
 //				Row excel = excels.getRow(code) ;
 				
 				EtnetHistIncome e = new EtnetHistIncome(code) ;
 				EtnetHistCommon common = new EtnetHistCommon(code) ;
+				
+				name = e.name ;
 				
 				Date marketDate = new Date() ;
 				boolean isMoreThan3years = true ;
@@ -167,11 +164,14 @@ public class EtnetRemainValue {
 //				System.out.println("PS " + remainRate + ",remain:" + remain) ;
 				
 			}catch(Exception ex) {
-				
-				ex.printStackTrace();
 				System.out.println("exception code : " + code) ;
 				ex.printStackTrace();
+				errorCode.add(code + " " + name) ;
 			}
+		}
+		System.out.println("error count:" + errorCode.size()); 
+		for(String s: errorCode) {
+			System.out.println(s) ;
 		}
 		System.out.println("result count:" + results.size()); 
 		for(String s: results) {

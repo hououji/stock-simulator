@@ -92,7 +92,7 @@ public abstract class Detector {
 				
 				// get the keep day
 				int i;
-				for(i=1; i<100; i++) {
+				for(i=0; i<100; i++) {
 					if(detect(csv,i)) break;
 				}
 				keepDays.add(i) ;
