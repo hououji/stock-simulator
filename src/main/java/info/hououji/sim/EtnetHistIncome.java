@@ -2,8 +2,11 @@ package info.hououji.sim;
 
 import java.io.File;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -166,7 +169,33 @@ public class EtnetHistIncome {
 		}
 		return Double.parseDouble(s) ;
 	}
+	
+	public Date getStartDate(int i) throws Exception {
+		Date endDate = getEndDate(i);
+		Date startDate = null;
+		if(this.lastYearIsHalf && i == 0) {
+			startDate = new Date(endDate.getTime() - 364L * 1000 * 60 * 60 * 24 / 2) ;
+		}else{
+			startDate = new Date(endDate.getTime() - 364L * 1000 * 60 * 60 * 24 ) ;
+		}
 
+		Calendar c = Calendar.getInstance();
+		c.setTime(startDate);
+		c.set(Calendar.DAY_OF_MONTH, c.getActualMinimum(Calendar.DAY_OF_MONTH));
+		return c.getTime() ;
+	}
+	public Date getEndDate(int i) throws Exception {
+		String d = dataset.date.data.get(i) ;
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM") ;
+		Date date = sdf.parse(d.substring(0, 7)) ;
+		
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
+		return c.getTime() ;
+	}
+
+	
 	public static void main(String args[]) throws Exception {
 		EtnetHistIncome ehi = new EtnetHistIncome("0040") ;
 		System.out.println(ehi.name) ;

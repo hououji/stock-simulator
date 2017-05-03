@@ -86,7 +86,7 @@ public class CSV {
 	
 	public int getItemNumFromDate(String date) {
 		for(int i=0; i<dates.size(); i++) {
-			if(dates.get(i).equals(date)) return i;
+			if(dates.get(i).compareTo(date) <=0 ) return i;
 		}
 //		throw new RuntimeException("No such date:" + date) ;
 		return -1 ;
@@ -146,8 +146,13 @@ public class CSV {
 	{
 		init(_file);
 	}
-	
 	public static void main(String args[]) throws Exception {
+		CSV csv = new CSV("0321") ;
+		int day = csv.getItemNumFromDate(new SimpleDateFormat("yyyy-MM-dd").parse("2014-01-01")) ;
+		System.out.println(csv.getDate(day) + " " + csv.get(day, CSV.ADJ_CLOSE) + " " + day) ;
+	}
+	
+	public static void main2(String args[]) throws Exception {
 		CSV csv = new CSV( new File(Downloader.getRecentDirectory(), "0002.csv")) ;
 		System.out.println(csv.getFile().getAbsolutePath());
 		for(int i=0; i<10; i++) {
