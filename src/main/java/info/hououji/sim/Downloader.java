@@ -1,11 +1,18 @@
 package info.hououji.sim;
-import info.hououji.sim.Log;
-
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
+import java.net.CookieStore;
+import java.net.HttpCookie;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -45,6 +52,71 @@ public class Downloader implements Runnable {
 	}
 	
 	public static void main(String args[]) throws Exception{
+
+		SSLTool.disableCertificateValidation();
+		
+		CookieManager manager = new CookieManager();
+		manager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
+		CookieHandler.setDefault(manager);
+		CookieStore cookieJar =  manager.getCookieStore();
+
+		String urlstr = "https://hk.finance.yahoo.com/quote/0016.HK/history?period1=0&period2=1495382400&interval=1d&filter=history&frequency=1d" ;
+//		URL url = new URL(urlstr);
+//		URLConnection connection = url.openConnection();
+//		connection.getContent();
+
+
+
+		String html = CachedDownload.getString(new URL(urlstr),false) ;
+//		System.out.println(html);
+		PrintStream out = new PrintStream(new FileOutputStream("out.html")) ;
+		out.println(html) ;
+		out.flush(); 
+		out.close();
+		String crumb = getYahooCrumb(html) ;
+		System.out.println(crumb) ;
+
+		List <HttpCookie> cookies =
+				cookieJar.getCookies();
+		List <HttpCookie> c2 = new ArrayList <HttpCookie>() ;
+		for (HttpCookie cookie: cookies) {
+			System.out.println("CookieHandler retrieved cookie: " + cookie);
+			c2.add(cookie) ;
+		}
+
+		
+		urlstr = "https://query1.finance.yahoo.com/v7/finance/download/8409.HK?period1=0&period2=1495382400&interval=1d&events=history&crumb=" + crumb ;
+		URL url = new URL(urlstr) ;
+		CookieManager manager2 = new CookieManager();
+		manager2.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
+		CookieHandler.setDefault(manager2);
+		CookieStore cookieJar2 =  manager.getCookieStore();
+		
+		for (HttpCookie c: c2) {
+			System.out.println("CookieHandler add cookie: " + c);
+			cookieJar2.add(url.toURI(), new HttpCookie(c.getName(),c.getValue()));
+		}
+		
+		String csv = CachedDownload.getString(url,false) ;
+		PrintStream out2 = new PrintStream(new FileOutputStream("out.csv")) ;
+		out2.println(csv) ;
+		out2.flush();
+		out2.close();
+	}
+	
+	public static String getYahooCrumb(String html) {
+		html = html.replaceAll("\\{", "\n").replaceAll("\\}", "\n") ;
+		String crumb = "" ;
+		for(String line : html.split("\n")) {
+			if(line.indexOf("\"firstName\"") != -1 && line.indexOf("\"crumb\"") != -1) {
+				crumb = line.split("\\\"")[3] ;
+			}
+		}
+		crumb = crumb.replaceAll("\\u002F", "\\") ;
+		return crumb;
+	}
+	
+	public static void main1(String args[]) throws Exception{
 		
 		// Find a location
 		File dir = new File("./data/" + new SimpleDateFormat("yyyyMMdd").format(new Date())) ;
@@ -54,6 +126,7 @@ public class Downloader implements Runnable {
 			String currCode = i + "" ;
 			currCode = StringUtils.leftPad(currCode, 4, '0') ;
 			executor.execute(new Downloader(currCode, dir));
+			break;
 		}
 		executor.shutdown();
 		
