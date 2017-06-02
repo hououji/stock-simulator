@@ -16,8 +16,8 @@ public class CSV {
 	public static int HIGH = 1 ;
 	public static int LOW = 2 ;
 	public static int CLOSE = 3 ;
-	public static int VOL = 4 ;
-	public static int ADJ_CLOSE = 5 ;
+	public static int VOL = 5 ;
+	public static int ADJ_CLOSE = 4 ;
 	public static int VOL_PRICE = 100 ;
 	
 	List<String> dates = new ArrayList<String>() ;
@@ -123,18 +123,24 @@ public class CSV {
 			BufferedReader r = new BufferedReader(new FileReader(file)) ;
 			r.readLine() ; // skip this first line, it is a lable
 			while(true) {
-				String line = r.readLine() ;
-				if(line == null) break; 
-				double [] data = new double[6] ;
-				int idx = 0 ;
-				StringTokenizer stok = new StringTokenizer(line,",") ;
-				dates.add(stok.nextToken()) ;
-				while(stok.hasMoreElements()) {
-					String token = stok.nextToken() ;
-					data[idx] = Double.parseDouble(token) ;
-					idx ++ ;
+				String line = null ;
+				try{
+					line = r.readLine() ;
+					System.out.println(line) ;
+					if(line == null) break; 
+					double [] data = new double[6] ;
+					int idx = 0 ;
+					StringTokenizer stok = new StringTokenizer(line,",") ;
+					dates.add(stok.nextToken()) ;
+					while(stok.hasMoreElements()) {
+						String token = stok.nextToken() ;
+						data[idx] = Double.parseDouble(token) ;
+						idx ++ ;
+					}
+					dataList.add(data); 
+				}catch(Exception ex) {
+					System.out.println("non-fatal error when paring stock "+code+", line : " + null) ;
 				}
-				dataList.add(data); 
 			}
 		}catch(Exception ex){
 			throw new RuntimeException(ex) ;
@@ -147,8 +153,8 @@ public class CSV {
 		init(_file);
 	}
 	public static void main(String args[]) throws Exception {
-		CSV csv = new CSV("0321") ;
-		int day = csv.getItemNumFromDate(new SimpleDateFormat("yyyy-MM-dd").parse("2014-01-01")) ;
+		CSV csv = new CSV("0004") ;
+		int day = csv.getItemNumFromDate(new SimpleDateFormat("yyyy-MM-dd").parse("2014-03-03")) ;
 		System.out.println(csv.getDate(day) + " " + csv.get(day, CSV.ADJ_CLOSE) + " " + day) ;
 	}
 	
