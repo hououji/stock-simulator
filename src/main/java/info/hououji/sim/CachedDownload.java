@@ -19,11 +19,14 @@ public class CachedDownload {
 	public static File dir = new File("cached") ;
 	
 	public static File getFile(URL url) throws IOException {
+		return getFile(url) ;
+	}
+	public static File getFile(URL url, boolean useCache) throws IOException {
 		String sha1 = DigestUtils.sha512Hex(url.toString()) ;
 		String sha11 = sha1.substring(0, 2) ;
 		String sha12 = sha1.substring(2, sha1.length()) ;
 		File outfile = new File(dir, sha11 + File.separator + sha12) ;
-		if(outfile.exists()) return outfile ;
+		if(outfile.exists() && useCache) return outfile ;
 		
 		URLConnection hc = url.openConnection() ;
 		hc.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
@@ -39,7 +42,10 @@ public class CachedDownload {
 	}
 	
 	public static String getString(URL url) throws IOException {
-		File file = getFile(url) ;
+		return getString(url, true) ;
+	}
+	public static String getString(URL url, boolean useCache) throws IOException {
+		File file = getFile(url, useCache) ;
 		BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file),"utf-8")) ;
 		String html = IOUtils.toString(in) ;
 		return html; 
