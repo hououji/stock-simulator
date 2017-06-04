@@ -23,6 +23,7 @@ public class EtnetRemainValue {
 			String line = in.readLine() ;
 			if(line == null) break;
 			if(line.length() <4) continue;
+			if(line.startsWith("\"")) continue;
 			oldCode.add(line.substring(0, 4)) ;
 		}
 		in.close();
