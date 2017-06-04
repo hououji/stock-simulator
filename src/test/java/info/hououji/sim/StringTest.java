@@ -1,5 +1,7 @@
 package info.hououji.sim;
 
+import java.util.Date;
+
 public class StringTest {
 
 	public static void main(String args[]) throws Exception {
@@ -11,5 +13,7 @@ public class StringTest {
 			System.out.println(count + ":"  +p) ;
 			count ++  ;
 		}
+		
+		System.out.println(new Date(1495209600L * 1000)) ;
 	}
 }
