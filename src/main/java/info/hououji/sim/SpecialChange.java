@@ -19,14 +19,16 @@ public class SpecialChange {
 	
 	public static String check(CSV csv) {
 		if(csv.getLen() < 5 * 250) return null;
-		MarketCapExcel excel = new MarketCapExcel() ;
-		if(excel.getRow(csv.getCode()).cap < 50 ) return null ;
 		
 		csv.setBaseDay(0);
 		for(int i=period; i>0; i--) {
 			double lowClose = csv.min(i, 5, CSV.LOW) ;
 			double maxHigh = csv.max(i, 5, CSV.HIGH) ;
-			if( maxHigh > lowClose * (1+rate / 100) ) return csv.getDate(i+1) ;
+			if( maxHigh > lowClose * (1+rate / 100) ) {
+				Detail d = new Detail(csv.getCode()) ;
+				if(d.marketCap < 50) return null ;
+				return csv.getDate(i+1) ;
+			}
 		}
 		
 		return null;
@@ -49,7 +51,6 @@ public class SpecialChange {
 		String title = "Special Change" ;
 		StringBuffer content = new StringBuffer() ;
 
-		MarketCapExcel mc = new MarketCapExcel() ;
 		for(File file : files) {
 			try{
 				CSV csv = new CSV(file) ;
@@ -59,13 +60,12 @@ public class SpecialChange {
 					System.out.println("code:" + csv.getCode());
 					String code = Downloader.getName(file) ;
 
-					Row r = mc.getRow(code) ;
-//					Detail aa = new Detail(code) ;
-					content.append("<div stock='"+code+"'><div class='title'>"+code+" "+r.name
+					Detail d = new Detail(code) ;
+					content.append("<div stock='"+code+"'><div class='title'>"+code+" "+d.name
 							+"," + date
-							+",PE:"+r.pe
-							+",PB:"+r.pb
-							+",Int:"+r.div+",Cap:"+r.cap+"億</div></div>\r\n") ;
+							+",PE:"+d.pe
+							+",PB:"+d.pb
+							+",Int:"+d.div+",Cap:"+d.marketCap+"億</div></div>\r\n") ;
 				}
 			}catch(Exception ex) {
 				ex.printStackTrace();

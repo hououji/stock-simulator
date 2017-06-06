@@ -126,8 +126,9 @@ public class CSV {
 				String line = null ;
 				try{
 					line = r.readLine() ;
-					System.out.println(line) ;
+//					System.out.println(line) ;
 					if(line == null) break; 
+					if("".equals(line.trim())) continue;
 					double [] data = new double[6] ;
 					int idx = 0 ;
 					StringTokenizer stok = new StringTokenizer(line,",") ;
@@ -139,7 +140,7 @@ public class CSV {
 					}
 					dataList.add(data); 
 				}catch(Exception ex) {
-					System.out.println("non-fatal error when paring stock "+code+", line : " + null) ;
+					System.out.println("non-fatal error when paring stock "+code+", line : " + line) ;
 				}
 			}
 		}catch(Exception ex){

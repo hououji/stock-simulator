@@ -49,10 +49,11 @@ public class Detail {
 			URL url = new URL("http://www.quamnet.com/Quote.action?stockCode=" + code) ;
 			
 //			System.out.println(url.toString()) ;
-			URLConnection hc = url.openConnection() ;
-			hc.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
-			in = hc.getInputStream() ;
-			html = IOUtils.toString(in) ;
+//			URLConnection hc = url.openConnection() ;
+//			hc.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
+//			in = hc.getInputStream() ;
+//			html = IOUtils.toString(in) ;
+			html = CachedDownload.getString(url) ;
 			doc = Jsoup.parse(html ) ;
 //			System.out.println(html) ;
 			
@@ -98,7 +99,10 @@ public class Detail {
 			es = doc.select("div:contains(現價) + div") ;
 			for(Element e :es) {
 				try{
-					if("停牌".equals(e.html())) this.stockSuspend = true;
+					if("停牌".equals(e.html())) {
+						this.stockSuspend = true;
+						return ;
+					}
 					close = parseDouble(e.html()) ;
 					break;
 				}catch(Exception ex){

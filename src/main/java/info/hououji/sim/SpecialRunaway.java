@@ -20,12 +20,7 @@ public class SpecialRunaway {
 	
 	public static String check(CSV csv) {
 		if(csv.getLen() < 5 * 250) return null;
-		MarketCapExcel excel = new MarketCapExcel() ;
-		if(excel.getRow(csv.getCode()) == null) {
-//			System.out.println("skip:" + csv.getCode()) ;
-			return null ;
-		}
-		if(excel.getRow(csv.getCode()).cap < 20 ) return null ;
+//		MarketCapExcel excel = new MarketCapExcel() ;
 		
 		csv.setBaseDay(0);
 		for(int i=0; i<=period; i++) {
@@ -43,7 +38,11 @@ public class SpecialRunaway {
 //				&& newHigh > oldClose * (1 + change/100)
 //				&& newAdj > oldAdj * (1 + change/100 * 0.3)
 			){
-				System.out.println("" + csv.getCode() + "," + csv.getDate(i) +  ",change:" + (int)((newHigh - oldClose)/oldClose * 100) + ",gap:" + (int)(stockGap*100)); 
+				System.out.println("" + csv.getCode() + "," + csv.getDate(i) +  ",change:" + (int)((newHigh - oldClose)/oldClose * 100) + ",gap:" + (int)(stockGap*100));
+
+				Detail d = new Detail(csv.getCode()) ;
+				if(d.marketCap < 20 ) return null ;
+
 				return csv.getDate(i+1) ;
 			}
 		}
@@ -75,7 +74,7 @@ public class SpecialRunaway {
 		String title = "Special Runaway" ;
 		StringBuffer content = new StringBuffer() ;
 
-		MarketCapExcel mc = new MarketCapExcel() ;
+//		MarketCapExcel mc = new MarketCapExcel() ;
 		for(File file : files) {
 			try{
 				CSV csv = new CSV(file) ;
@@ -86,13 +85,14 @@ public class SpecialRunaway {
 //					System.out.println("code:" + csv.getCode());
 					String code = Downloader.getName(file) ;
 
-					Row r = mc.getRow(code) ;
+//					Row r = mc.getRow(code) ;
 //					Detail aa = new Detail(code) ;
-					content.append("<div stock='"+code+"'><div class='title'>"+code+" "+r.name
+					Detail d = new Detail(csv.getCode()) ;
+					content.append("<div stock='"+code+"'><div class='title'>"+code+" "+d.name
 							+"," + date
-							+",PE:"+r.pe
-							+",PB:"+r.pb
-							+",Int:"+r.div+",Cap:"+r.cap+"億</div></div>\r\n") ;
+							+",PE:"+d.pe
+							+",PB:"+d.pb
+							+",Int:"+d.div+",Cap:"+d.marketCap+"億</div></div>\r\n") ;
 				}
 			}catch(Exception ex) {
 				ex.printStackTrace();

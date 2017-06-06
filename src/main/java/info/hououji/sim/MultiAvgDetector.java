@@ -24,7 +24,7 @@ public class MultiAvgDetector extends Detector {
 		csv.setBaseDay(backDays);
 		
 		// ignore if too small
-		if(this.isMarketCapGreat(csv.getCode(), 50) == false) return false ;
+//		if(this.isMarketCapGreat(csv.getCode(), 50) == false) return false ;
 		if(csv.getLen() < 250) return false;
 		if(csv.max(0, 10, CSV.VOL) < 0.1) return false;
 
@@ -60,6 +60,9 @@ public class MultiAvgDetector extends Detector {
 			ex.printStackTrace();
 			return false;
 		}
+		
+		Detail d = new Detail(csv.getCode()) ;
+		if(d.marketCap < 50) return false;
 		
 		csv.setBaseDay(0);
 		testDalayDate = csv.getDate(testDelay) ;

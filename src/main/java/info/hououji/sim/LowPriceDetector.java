@@ -23,7 +23,7 @@ public class LowPriceDetector extends Detector{
 			// ignore if too small
 //			if(csv.get(0, CSV.VOL_PRICE) < 100000000) return false;
 //			if(marketCap.get(csv.getCode()) == null || marketCap.get(csv.getCode()) < 200) return false;
-			if(this.isMarketCapGreat(csv.getCode(), 50) == false) return false ;
+//			if(this.isMarketCapGreat(csv.getCode(), 50) == false) return false ;
 			if(csv.getLen() < backDays + 250) return false;
 			if(csv.max(0, 10, CSV.VOL) < 0.1) return false;
 			
@@ -39,8 +39,10 @@ public class LowPriceDetector extends Detector{
 			double avg4 = csv.avg(0, 4, CSV.ADJ_CLOSE) ;
 			if(avg4 < avg18) return false ;
 			
-			Row row = this.getRow(csv.getCode()) ;
-			if( ! (row.pb < 0.8 || row.div > 4)) return false;// it must has something 'good' to prevent too more 
+//			Row row = this.getRow(csv.getCode()) ;
+			Detail d = new Detail(csv.getCode()) ;
+			if( ! (d.pb < 0.8 || d.div > 4)) return false;// it must has something 'good' to prevent too more 
+			if(d.marketCap < 50) return false;
 			
 			// pass
 			Log.log(csv.getName() + ", adf cls:" + csv.to2dp(csv.get(0, CSV.ADJ_CLOSE)) +", ex:" + csv.to2dp(csv.get(0, CSV.VOL_PRICE)));

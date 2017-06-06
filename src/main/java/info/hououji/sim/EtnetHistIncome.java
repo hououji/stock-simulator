@@ -68,7 +68,12 @@ public class EtnetHistIncome {
 			return Misc.parseDouble(getStr(name, i)) * m ;
 		}
 		public String getStr(String name, int i) {
-			return this.getRow(name).data.get(i) ; 
+			try{
+				return this.getRow(name).data.get(i) ;
+			}catch(NullPointerException ex) {
+				System.out.println("fail when getStr : " + name);
+				throw ex;
+			}
 		}
 		public String toString() {
 			String result = date.toString() ;

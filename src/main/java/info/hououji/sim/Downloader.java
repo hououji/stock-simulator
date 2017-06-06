@@ -71,6 +71,8 @@ public class Downloader implements Runnable {
 			crumb = getYahooCrumb(html) ;
 			System.out.println(crumb) ;
 			if(crumb.indexOf("002F")== -1) break; // retry if crumb include 002F
+			System.out.println("get crumb fail, wait for retry") ;
+			Thread.sleep(5000);
 	//		System.out.println(html);
 	//		PrintStream out = new PrintStream(new FileOutputStream("out.html")) ;
 	//		out.println(html) ;
@@ -93,7 +95,7 @@ public class Downloader implements Runnable {
 		dir.mkdirs() ;
 		
 		ExecutorService executor = Executors.newFixedThreadPool(5);  
-		for(int i=1; i<=4; i++) {
+		for(int i=1; i<=9999; i++) {
 			String currCode = i + "" ;
 			currCode = StringUtils.leftPad(currCode, 4, '0') ;
 			executor.execute(new Downloader(currCode, dir, crumb));
@@ -140,9 +142,11 @@ public class Downloader implements Runnable {
 			String csv = CachedDownload.getString(url,false) ;
 			String line[] = csv.split("\n") ;
 			StringBuffer sb = new StringBuffer() ;
-			sb.append(line[0]) ;
+			sb.append(line[0].trim() + "\n") ;
 			for(int i=line.length-1; i>0 ;i--) {
-				sb.append(line[i] + "\n") ;
+				if( "".equals( line[i].trim()) ) continue ;
+				if(line[i].indexOf("null" )!= -1 ) continue;
+				sb.append(line[i].trim() + "\n") ;
 			}
 			
 			PrintStream out2 = new PrintStream(new FileOutputStream(file)) ;
