@@ -27,7 +27,7 @@ public class KeepUpDetector extends Detector{
 			csv.setBaseDay(backDay);
 			
 			// ignore if too small
-			if(this.isMarketCapGreat(csv.getCode(), marketCap) == false) return false ;
+//			if(this.isMarketCapGreat(csv.getCode(), marketCap) == false) return false ;
 			if(csv.getLen() < 250) return false;
 			if(csv.max(0, 10, CSV.VOL) < 0.1) return false;
 
@@ -41,7 +41,10 @@ public class KeepUpDetector extends Detector{
 					return false; // fail
 				}
 			}
-			
+
+			Detail d = new Detail(csv.getCode()) ;
+			if(d.marketCap < marketCap) return false;
+
 			// pass
 			Log.log(csv.getName() + ", adf cls:" + csv.to2dp(csv.get(0, CSV.ADJ_CLOSE)) +", vol price:" + csv.to2dp(csv.get(0, CSV.VOL_PRICE)));
 			

@@ -21,7 +21,7 @@ public class VolumeSpecialDetector extends Detector{
 			csv.setBaseDay(baseDay);
 			
 			// ignore if too small
-			if(this.isMarketCapGreat(csv.getCode(), 200) == false) return false ;
+//			if(this.isMarketCapGreat(csv.getCode(), 200) == false) return false ;
 			if(csv.getLen() < 250) return false;
 			if(csv.max(0, 10, CSV.VOL) < 0.1) return false;
 
@@ -41,6 +41,10 @@ public class VolumeSpecialDetector extends Detector{
 			double sd = this.sd(vols) ;
 			double currVol = (vols.get(0) + vols.get(1) + vols.get(2) + vols.get(3))  / 4;    
 			if(currVol < avg + sd * x) return false;
+			
+			Detail d = new Detail(csv.getCode()) ;
+			if(d.marketCap < 200) return false;
+			
 			System.out.println("code:" + csv.getCode() + ",sd:" + csv.to2dp( (currVol - avg )/sd));
 
 			return true;
