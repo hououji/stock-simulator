@@ -19,7 +19,7 @@ public class SpecialRunaway {
 	static double change = 40 ;
 	
 	public static String check(CSV csv) {
-		if(csv.getLen() < 5 * 250) return null;
+		if(csv.getLen() < 2 * 250) return null;
 //		MarketCapExcel excel = new MarketCapExcel() ;
 		
 		csv.setBaseDay(0);
@@ -34,14 +34,17 @@ public class SpecialRunaway {
 			
 			double stockGap = (newLow - oldHigh) / oldHigh ;
 			
-			if( (newLow - oldHigh) / oldHigh > gap 
-//				&& newHigh > oldClose * (1 + change/100)
+			if( (newLow - oldHigh) / oldHigh > gap / 100
+				&& newHigh > oldClose * (1 + change/100)
 //				&& newAdj > oldAdj * (1 + change/100 * 0.3)
 			){
 				System.out.println("" + csv.getCode() + "," + csv.getDate(i) +  ",change:" + (int)((newHigh - oldClose)/oldClose * 100) + ",gap:" + (int)(stockGap*100));
 
 				Detail d = new Detail(csv.getCode()) ;
-				if(d.marketCap < 20 ) return null ;
+				if(d.marketCap < 20 ) {
+					System.out.println("market cap : " + d.marketCap + ", skip") ;
+					return null ;
+				}
 
 				return csv.getDate(i+1) ;
 			}
