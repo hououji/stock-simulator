@@ -35,7 +35,6 @@ public class EtnetRemainValue {
 //		MarketCapExcel excels = new MarketCapExcel() ;
 		for(File file : files) {
 			String code = file.getName().substring(0,4) ;
-			if(!"1340".equals(code)) continue;
 			String name = "" ;
 			try{
 				CSV csv = new CSV(file) ;
