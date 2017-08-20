@@ -1,10 +1,11 @@
-package info.hououji.sim;
+	package info.hououji.sim;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -20,8 +21,15 @@ public class CSV {
 	public static int ADJ_CLOSE = 4 ;
 	public static int VOL_PRICE = 100 ;
 	
-	List<String> dates = new ArrayList<String>() ;
-	List<double[]> dataList = new ArrayList<double[]>() ;
+	class Row {
+		String date ;
+		double[] dataList  ;
+	}
+	
+	List<Row> rows = new ArrayList<Row>() ;
+//	List<String> dates = new ArrayList<String>() ;
+//	List<double[]> dataList = new ArrayList<double[]>() ;
+	
 	File file ;
 	String name = "" ;
 	String code = "" ;
@@ -78,15 +86,15 @@ public class CSV {
 	}
 	
 	public int getLen() {
-		return dates.size() ;
+		return rows.size() ;
 	}
 	public String getDate(int num) {
-		return dates.get(num + baseDay) ;
+		return rows.get(num + baseDay).date ;
 	}
 	
 	public int getItemNumFromDate(String date) {
-		for(int i=0; i<dates.size(); i++) {
-			if(dates.get(i).compareTo(date) <=0 ) return i;
+		for(int i=0; i<rows.size(); i++) {
+			if(rows.get(i).date.compareTo(date) <=0 ) return i;
 		}
 //		throw new RuntimeException("No such date:" + date) ;
 		return -1 ;
@@ -98,7 +106,7 @@ public class CSV {
 	
 	public double get(int num, int type) {
 		if(type < 100) {
-			return  dataList.get(num + baseDay)[type] ;
+			return  rows.get(num + baseDay).dataList[type] ;
 		}
 		if(type == VOL_PRICE) {
 			return get(num,VOL) * get(num,ADJ_CLOSE) ;
@@ -122,6 +130,7 @@ public class CSV {
 			code = name.substring(0, 4) ;
 			BufferedReader r = new BufferedReader(new FileReader(file)) ;
 			r.readLine() ; // skip this first line, it is a lable
+NEW_LINE:
 			while(true) {
 				String line = null ;
 				try{
@@ -132,17 +141,28 @@ public class CSV {
 					double [] data = new double[6] ;
 					int idx = 0 ;
 					StringTokenizer stok = new StringTokenizer(line,",") ;
-					dates.add(stok.nextToken()) ;
+					Row row = new Row();
+					row.date = stok.nextToken() ;
 					while(stok.hasMoreElements()) {
 						String token = stok.nextToken() ;
+						if("null".equals(token)) continue NEW_LINE ;
 						data[idx] = Double.parseDouble(token) ;
 						idx ++ ;
 					}
-					dataList.add(data); 
+					row.dataList = data ;
+					rows.add(row) ;
+
 				}catch(Exception ex) {
 					System.out.println("non-fatal error when paring stock "+code+", line : " + line) ;
 				}
 			}
+			
+			Collections.sort(rows, new Comparator<Row>(){
+				public int compare(Row arg0, Row arg1) {
+					return -1 * arg0.date.compareTo(arg1.date) ;
+				}
+			});
+			
 		}catch(Exception ex){
 			throw new RuntimeException(ex) ;
 		}

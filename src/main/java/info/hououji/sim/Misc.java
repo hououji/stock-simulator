@@ -92,4 +92,12 @@ public class Misc {
 		}
 		return s; 
 	}
+
+	public static String lpad(String s,int w) {
+		while(len(s) < w) {
+			s = ' ' + s;
+		}
+		return s; 
+	}
+
 }

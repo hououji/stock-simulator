@@ -53,10 +53,7 @@ public class Downloader implements Runnable {
 		return filename.substring(0, 4) ;
 	}
 	
-	public static void main(String args[]) throws Exception{
-
-		SSLTool.disableCertificateValidation();
-		
+	public static String getCrumb() throws Exception {
 		// Get crumb
 		CookieManager manager = new CookieManager();
 		manager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
@@ -89,6 +86,15 @@ public class Downloader implements Runnable {
 		for (HttpCookie cookie: cookies) {
 			cookieJar2.add(new URL("https://query1.finance.yahoo.com/").toURI(), cookie);
 		}
+		return crumb;
+	}
+	
+	public static void main(String args[]) throws Exception{
+
+		SSLTool.disableCertificateValidation();
+		
+		String crumb = getCrumb() ;
+		System.out.println("crumb : " + crumb) ;
 		
 		// Go
 		File dir = new File("./data/" + new SimpleDateFormat("yyyyMMdd").format(new Date())) ;
@@ -98,7 +104,9 @@ public class Downloader implements Runnable {
 		for(int i=1; i<=9999; i++) {
 			String currCode = i + "" ;
 			currCode = StringUtils.leftPad(currCode, 4, '0') ;
-			executor.execute(new Downloader(currCode, dir, crumb));
+//			executor.execute(new Downloader(currCode, dir, crumb));
+			new Downloader(currCode, dir, crumb).run();
+			Thread.sleep(200);
 		}
 		executor.shutdown();
 	}
