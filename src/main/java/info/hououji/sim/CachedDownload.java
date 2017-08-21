@@ -10,6 +10,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Date;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
@@ -26,8 +27,17 @@ public class CachedDownload {
 		String sha11 = sha1.substring(0, 2) ;
 		String sha12 = sha1.substring(2, sha1.length()) ;
 		File outfile = new File(dir, sha11 + File.separator + sha12) ;
-		if(outfile.exists() && useCache) return outfile ;
+		if(outfile.exists() && useCache) {
+			if( new Date().getTime() -  outfile.lastModified() < 1000 * 60 * 60 * 24) {
+				System.out.println("use cache:" + url.toString());
+				return outfile ;
+			}else{
+				outfile.delete() ;
+			}
+		}
 		
+		
+		System.out.println("download:" + url.toString());
 		URLConnection hc = url.openConnection() ;
 		hc.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
 		String html = IOUtils.toString(hc.getInputStream()) ;

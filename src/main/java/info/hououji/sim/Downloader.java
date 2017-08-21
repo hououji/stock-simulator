@@ -18,6 +18,11 @@ import java.util.concurrent.Executors;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+
+import info.hououji.sim.WebbConcenration.Result;
 
 
 public class Downloader implements Runnable {
@@ -100,13 +105,21 @@ public class Downloader implements Runnable {
 		File dir = new File("./data/" + new SimpleDateFormat("yyyyMMdd").format(new Date())) ;
 		dir.mkdirs() ;
 		
-		ExecutorService executor = Executors.newFixedThreadPool(5);  
-		for(int i=1; i<=9999; i++) {
-			String currCode = i + "" ;
-			currCode = StringUtils.leftPad(currCode, 4, '0') ;
+		ExecutorService executor = Executors.newFixedThreadPool(5);
+		
+		String html = CachedDownload.getString(new URL("https://webb-site.com/dbpub/mcap.asp")) ;
+		Document doc ;
+		doc = Jsoup.parse(html ) ;
+		Elements stockHref = doc.select("table.numtable tr td:eq(1) a") ;
+
+		
+		for(int i=0; i<stockHref.size() ; i++) {
+			String href = stockHref.get(i).attr("href") ; 
+			String code  = stockHref.get(i).text() ;
+//		for(int i=1; i<=9999; i++) {
 //			executor.execute(new Downloader(currCode, dir, crumb));
-			new Downloader(currCode, dir, crumb).run();
-			Thread.sleep(200);
+			new Downloader(code, dir, crumb).run();
+			Thread.sleep(1000);
 		}
 		executor.shutdown();
 	}

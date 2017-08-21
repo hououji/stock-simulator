@@ -68,6 +68,7 @@ public class WebbConcenration {
 ////			System.out.println(stockHtml) ; 
 			Detail d = new Detail(code) ;
 			results.add(new Result(code + " " +d.name, top5AndNonCCASS, (100 -inCCASS),minTradeDay)) ;
+			break;
 		}
 		
 		Collections.sort(results);
