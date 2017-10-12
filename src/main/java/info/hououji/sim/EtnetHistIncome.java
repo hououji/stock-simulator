@@ -20,6 +20,7 @@ public class EtnetHistIncome {
 	String code;
 	String name;
 	String currency;
+	public String thisyear;
 	double currRate ;
 	int unit;
 	Boolean lastYearIsHalf = false ;
@@ -132,7 +133,7 @@ public class EtnetHistIncome {
 				}
 			}
 			
-			String thisyear = dataset.date.data.get(0) ;
+			thisyear = dataset.date.data.get(0) ;
 			String[] currencies = new String[]{
 					"港元","美元","人民幣", "加元", "歐元" ,"日圓", "坡元", "英鎊"
 			};

@@ -66,33 +66,42 @@ public class EtnetRemainValue {
 				if(sale < 800000000) continue ;
 //				System.out.println("adj sales:" + Misc.formatMoney(sale)) ;
 				
-				if(e.dataset.getDouble("分佔聯營公司及共同控制公司", 0) > e.dataset.getDouble("股東應佔溢利", 0) * 0.15 ) {
-					continue;
-				}
-				if(e.dataset.getDouble("投資物業公平值變動及減值", 0) > e.dataset.getDouble("股東應佔溢利", 0) * 0.15 ) {
-					continue;
-				}
-				if(e.dataset.getDouble("其他項目公平值變動及減值", 0) > e.dataset.getDouble("股東應佔溢利", 0) * 0.15 ) {
-					continue;
-				}
+//				if(e.dataset.getDouble("分佔聯營公司及共同控制公司", 0) > e.dataset.getDouble("股東應佔溢利", 0) * 0.15 ) {
+//					continue;
+//				}
+//				if(e.dataset.getDouble("投資物業公平值變動及減值", 0) > e.dataset.getDouble("股東應佔溢利", 0) * 0.15 ) {
+//					continue;
+//				}
+//				if(e.dataset.getDouble("其他項目公平值變動及減值", 0) > e.dataset.getDouble("股東應佔溢利", 0) * 0.15 ) {
+//					continue;
+//				}
 				
+/*
 				double earn = e.dataset.getDouble("股東應佔溢利", 0) * e.currRate ;
-				double shareEarn = e.dataset.getDouble("每股盈利 (仙)", 0) / 100  * e.currRate;
-				long share = (long)(earn / shareEarn) ;
-//				System.out.println("share:" + Misc.formatMoney(share)) ;
-				
-//				System.out.println("earn ratio:" + earnRate);
-				double earnRate = e.dataset.getDouble("股東應佔溢利", 0) / e.dataset.getDouble("營業額", 0) ;
+				earn = earn - e.dataset.getDouble("分佔聯營公司及共同控制公司", 0)
+							- e.dataset.getDouble("投資物業公平值變動及減值", 0)
+							- e.dataset.getDouble("其他項目公平值變動及減值", 0);
+				if(e.lastYearIsHalf) {
+					earn = earn * 2 ;
+				}
+	*/			
+//				double shareEarn = e.dataset.getDouble("每股盈利 (仙)", 0) / 100  * e.currRate;
+				long share = (long)(e.dataset.getDouble("股東應佔溢利", 0) / (e.dataset.getDouble("每股盈利 (仙)", 0) / 100) ) ;
+				System.out.println("share:" + Misc.formatMoney(share)) ;
 				double ps = sale / share ;
+				System.out.println("ps:" + ps) ;
+				
+				double earnRate = getEarnRate(e, 0) ;
+				System.out.println("earn ratio:" + earnRate);
 				
 				double remainRate = 0;
 				String rrStr = "" ;
 				if(isMoreThan3years) {
 					// full setif
 					
-					double earnRate0 = e.dataset.getDouble("股東應佔溢利", 0) / e.dataset.getDouble("營業額", 0) ;
-					double earnRate1 = e.dataset.getDouble("股東應佔溢利", 1) / e.dataset.getDouble("營業額", 1) ;
-					double earnRate2 = e.dataset.getDouble("股東應佔溢利", 2) / e.dataset.getDouble("營業額", 2) ;
+					double earnRate0 = getEarnRate(e, 0) ;
+					double earnRate1 = getEarnRate(e, 1) ;
+					double earnRate2 = getEarnRate(e, 2) ;
 					double r0 = getSimpleRemainRate(earnRate0) ;
 					double r1 = getSimpleRemainRate(earnRate1) ;
 					double r2 = getSimpleRemainRate(earnRate2) ;
@@ -139,16 +148,19 @@ public class EtnetRemainValue {
 				double remain = ps * remainRate ;
 				String week52 = csv.min(0, 250, CSV.ADJ_CLOSE) + " ~ " + csv.max(0, 250, CSV.ADJ_CLOSE) ;
 				
+				double nav = e.dataset.getDouble("每股帳面資產淨值 ($)", 0)  * e.currRate;
+				double ironTri = (nav * 0.5 + remain) /2 ;  
+				
 				double min = csv.min(0, 1, CSV.ADJ_CLOSE) ;
 				EtnetHistRatio ehr = new EtnetHistRatio(code) ;
 				Detail d = new Detail(code) ;
 				if(d.stockSuspend) continue;
-				if( min < remain * 1.1 ){
+				if( min <  Math.max(remain, ironTri) * 1.1 ){
 					String s = "";
 					if( ! oldCode.contains(code)) s = s + "(NEW:"+new SimpleDateFormat("yyyy-MM-dd").format(new Date())+")" ;
-					s = s + "" + code + Misc.pad(e.name, 10) ;
+					s = s + "" + code + Misc.pad(e.name, 10) + " " + e.thisyear ;
 					s = s +  ";" + min ; 
-					s = s +  ";remain(ps:"+rrStr+"):" + Misc.trim(remain,3) ;
+					s = s +  ";remain(ps:"+rrStr+"):" + Misc.trim(remain,3)+",鐵角:" + Misc.trim(ironTri,3) ;
 					s = s + ";=googlefinance(\"HKG:"+code+"\",\"price\")" ;
 					
 					s = s + ";52周:"+ week52 + " PE:" + Misc.trim(d.pe,2) + " PB:" + Misc.trim(d.pb,2) + " 息率:" + Misc.trim(d.div,2) + " 市值:" + d.marketCap ;
@@ -184,6 +196,16 @@ public class EtnetRemainValue {
 		}
 	}
 
+	private static double getEarnRate(EtnetHistIncome e,int idx) {
+		double earn = e.dataset.getDouble("股東應佔溢利", idx) ;
+		earn = earn - e.dataset.getDouble("分佔聯營公司及共同控制公司", idx)
+					- e.dataset.getDouble("投資物業公平值變動及減值", idx)
+					- e.dataset.getDouble("其他項目公平值變動及減值", idx);
+		double earnRate = earn / e.dataset.getDouble("營業額", idx) ;
+
+		return earnRate ; 
+	}
+	
 	private static double getSimpleRemainRate(double earnRate) {
 		double remainRate = 0 ;
 		if(earnRate <= 0.02) {

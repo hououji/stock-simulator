@@ -37,9 +37,8 @@ public class Detail {
 	
 	public Detail() {}
 	
-	public Detail(String code) {
+	public void init(boolean useCache) {
 		InputStream in = null;
-		this.code = code ;
 		try{
 			String html = "" ;
 			Document doc ;
@@ -53,7 +52,7 @@ public class Detail {
 //			hc.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
 //			in = hc.getInputStream() ;
 //			html = IOUtils.toString(in) ;
-			html = CachedDownload.getString(url) ;
+			html = CachedDownload.getString(url,useCache) ;
 			doc = Jsoup.parse(html ) ;
 //			System.out.println(html) ;
 			
@@ -191,6 +190,19 @@ public class Detail {
 			IOUtils.closeQuietly(in);
 		}
 	}
+	
+	public Detail(String code) {
+		this.code = code ;
+		boolean useCache = false ;
+		init(true) ;
+		if(this.getMarketCap() == 0) {
+			for(int i=0;i<3; i++) {
+				try{Thread.sleep(500);}catch(Exception ex){}
+				init(false) ;
+				if(this.getMarketCap() != 0) break; 
+			}
+		}
+	}
 
 	private Elements getElements(Document doc, String s ) {
 		return doc.select("#chartSummaryLeft td:contains("+s+") + td span") ;
@@ -282,7 +294,7 @@ public class Detail {
 //		Detail d = new Detail("0005") ;
 //		d.writeToFile();
 		
-		Detail d = new Detail("0342") ;
+		Detail d = new Detail("0240") ;
 		System.out.println("PB: " + d.getPb()) ;
 		System.out.println("PE: " + d.getPe()) ;
 		System.out.println("Div:"+d.getDiv()) ;
