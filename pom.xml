@@ -1,5 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
+	<!-- To downloan the dependency, run at CMD, Project root as path, run 
+		mvn clean
+		mvn install
+		 
+		the resulting jar will at target/info.hououji-0.0.1.jar
+		and the dependencies jar will find at target/lib
+	 -->
+	
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>info.hououji</groupId>
@@ -52,6 +61,16 @@
 		  <version>1.10.1</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
+		
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
+<!-- https://mvnrepository.com/artifact/commons-math/commons-math -->
+<dependency>
+    <groupId>commons-math</groupId>
+    <artifactId>commons-math</artifactId>
+    <version>1.2</version>
+</dependency>
+		
+		
 <dependency>
     <groupId>com.fasterxml.jackson.core</groupId>
     <artifactId>jackson-core</artifactId>
@@ -65,4 +84,43 @@
 </dependency>
 
 	</dependencies>
+	
+	<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <configuration>
+                <archive>
+                    <manifest>
+                        <addClasspath>true</addClasspath>
+                        <classpathPrefix>lib/</classpathPrefix>
+                        <mainClass>fully.qualified.MainClass</mainClass>
+                    </manifest>
+                </archive>
+            </configuration>
+        </plugin>
+
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+                <execution>
+                    <phase>install</phase>
+                    <goals>
+                        <goal>copy-dependencies</goal>
+                    </goals>
+                    <configuration>
+                        <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        <!-- optional -->
+                        <!-- exclude copying test and provided dependencies -->
+                        <includeScope>runtime</includeScope>
+                        <excludeScope>provided</excludeScope>
+                        <!-- optional -->
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
 </project>

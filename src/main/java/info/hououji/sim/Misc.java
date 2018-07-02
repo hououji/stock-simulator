@@ -65,6 +65,12 @@ public class Misc {
 //		return d;
 	}
 	
+	public static String formatPrice(double d, int len) {
+		DecimalFormat  df = new DecimalFormat ("##0.00") ;
+		String s  = df.format(d) ;
+		return lpad(s,len) ;
+	}
+	
 	public static double trim(double d) {
 		if(d > 100) return Math.round(d) ;
 		return Math.round(d * 100) / 100d ;

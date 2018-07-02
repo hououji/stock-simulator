@@ -11,6 +11,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class EtnetRemainValue {
 	
 	
@@ -23,10 +25,17 @@ public class EtnetRemainValue {
 			String line = in.readLine() ;
 			if(line == null) break;
 			if(line.length() <4) continue;
-			if(line.startsWith("\"")) continue;
-			oldCode.add(line.substring(0, 4)) ;
+			if(line.indexOf(")") == -1) continue;
+			String code = line.substring(line.indexOf(")") + 1) ;
+			if(code.length() < 4) continue;
+			code = code.substring(0, 4) ;
+			if(!StringUtils.isNumeric(code)) continue;
+			//if(line.startsWith("\"")) continue;
+			System.out.println("previous code : " + code) ;
+			oldCode.add(code) ;
 		}
 		in.close();
+		
 		
 		File dir = Downloader.getRecentDirectory() ;
 		File[] files = dir.listFiles() ;

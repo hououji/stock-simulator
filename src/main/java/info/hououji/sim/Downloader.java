@@ -1,5 +1,6 @@
 package info.hououji.sim;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
@@ -10,19 +11,15 @@ import java.net.CookieStore;
 import java.net.HttpCookie;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.io.IOUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-
-import info.hououji.sim.WebbConcenration.Result;
 
 
 public class Downloader implements Runnable {
@@ -107,19 +104,21 @@ public class Downloader implements Runnable {
 		
 		ExecutorService executor = Executors.newFixedThreadPool(5);
 		
-		String html = CachedDownload.getString(new URL("https://webb-site.com/dbpub/mcap.asp")) ;
+		//String html = CachedDownload.getString(new URL("https://webb-site.com/dbpub/mcap.asp")) ;
+		String html = IOUtils.toString(new FileInputStream(new File("mcap.asp"))) ;
 		Document doc ;
 		doc = Jsoup.parse(html ) ;
 		Elements stockHref = doc.select("table.numtable tr td:eq(1) a") ;
 
 		
 		for(int i=0; i<stockHref.size() ; i++) {
+			System.out.println("list "+i+"/" + stockHref.size())  ;
 			String href = stockHref.get(i).attr("href") ; 
 			String code  = stockHref.get(i).text() ;
 //		for(int i=1; i<=9999; i++) {
 //			executor.execute(new Downloader(currCode, dir, crumb));
 			new Downloader(code, dir, crumb).run();
-			Thread.sleep(1000);
+			Thread.sleep(200);
 		}
 		executor.shutdown();
 	}
@@ -160,7 +159,7 @@ public class Downloader implements Runnable {
 			Log.log("download start : " + code) ;
 			File file = new File(dir, code + ".csv") ;
 			URL url = new URL("https://query1.finance.yahoo.com/v7/finance/download/"+code+".HK?period1=0&period2="+new Date().getTime()+"&interval=1d&events=history&crumb=" + crumb) ;
-			String csv = CachedDownload.getString(url,false) ;
+			String csv = CachedDownload.getString(url,false) ;// since the crumb will change , cache is no use 
 			String line[] = csv.split("\n") ;
 			StringBuffer sb = new StringBuffer() ;
 			sb.append(line[0].trim() + "\n") ;

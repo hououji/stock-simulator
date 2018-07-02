@@ -29,7 +29,7 @@ public class CachedDownload {
 		File outfile = new File(dir, sha11 + File.separator + sha12) ;
 		if(outfile.exists() && useCache) {
 			if( new Date().getTime() -  outfile.lastModified() < 1000 * 60 * 60 * 24) {
-				System.out.println("use cache:" + url.toString());
+				//System.out.println("use cache:" + url.toString());
 				return outfile ;
 			}else{
 				outfile.delete() ;
