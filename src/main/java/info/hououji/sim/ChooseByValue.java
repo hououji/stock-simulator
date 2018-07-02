@@ -72,7 +72,7 @@ public class ChooseByValue {
 				double minLowPs = lowPsList.get(1) ;
 				double minHighPs = highPsList.get(1) ;
 				if(currPs < minLowPs * 1.1 || currPs < minHighPs * 0.7 ) {
-					System.out.println("code:" + code + ",curr price:" + Misc.trim(csv.get(0, CSV.ADJ_CLOSE)) + ",curr PS:" + Misc.trim(currPs) +",2nd min Low Ps:" + Misc.trim(minLowPs) + ",2nd min High Ps:" + Misc.trim(minHighPs)) ;
+					System.out.println("code:" + code + " " + h.name + ",curr price:" + Misc.trim(csv.get(0, CSV.ADJ_CLOSE)) + ",curr PS:" + Misc.trim(currPs) +",2nd min Low Ps:" + Misc.trim(minLowPs) + ",2nd min High Ps:" + Misc.trim(minHighPs)) ;
 					System.out.println("                         # of Share     PS=1.0   PRICE/L  PRICE/H  PS/L     PS/H") ;
 					System.out.println(msg) ;
 				}

@@ -22,6 +22,10 @@ public class ChooseByValueToHtml {
 		String header = new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " - " + "Choose by Value" ;
 		String title = "Choose by Value" ;
 		StringBuffer content = new StringBuffer() ;
+		StringBuffer text = new StringBuffer() ;
+		
+		text.append("<table border='1'><tr><th>Code</th><th>Name</th><th>Price</th><th>curr. PS</th>") ;
+		text.append("<th>min PS/L</th><th>2nd min PS/L</th><th>min PS/H</th><th>2nd PS/H</th></tr>") ;
 		
 		double currPs1 =10000;
 		code : for(String code  : codes) {
@@ -115,6 +119,14 @@ public class ChooseByValueToHtml {
 					content.append("<tr><th>Start</th><th>End</th><th># of share</th><th>Sales/S</th><th>PRICE/L</th><th>PRICE/H</th><th>PS/L</th><th>PS/H</th></tr>") ;
 					content.append(msg) ;
 					content.append("</table><br><br>") ;
+					text.append("<tr><td>" + code + "</td><td>" + h.name + "</td><td>" + Misc.trim(csv.get(0, CSV.ADJ_CLOSE)) 
+							+ "</td><td>" + Misc.trim(currPs) 
+							+"</td>"
+							+ "<td>" + Misc.trim((currPs-lowPsList.get(0))/lowPsList.get(0) *100,2)  +"%" + "</td>"
+							+ "<td>" + Misc.trim((currPs-secondMinLowPs)/secondMinLowPs * 100,2) +"%" + "</td>"
+							+ "<td>" + Misc.trim((currPs - highPsList.get(0) )/highPsList.get(0) * 100,2) +"%" + "</td>"
+							+ "<td>" + Misc.trim((currPs - secondMinHighPs )/secondMinHighPs* 100,2)  +"%" + "</td>"
+							+ "</tr>")  ;
 				}
 			}catch(Exception ex) {
 				ex.printStackTrace(); 
@@ -124,6 +136,8 @@ public class ChooseByValueToHtml {
 		template = template.replace("#TITLE#", title) ;
 		template = template.replace("#CONTENT#", content) ;
 		
+		text.append("</table>") ;
+		
 		File outputDir = new File("output") ;
 		outputDir.mkdirs() ;
 		
@@ -131,6 +145,11 @@ public class ChooseByValueToHtml {
 		IOUtils.write(template, out);
 		out.flush();
 		out.close() ;
+
+		FileOutputStream textout = new FileOutputStream(new File(outputDir,  "choose-by-value" + ".txt")) ;
+		IOUtils.write(text, textout);
+		textout.flush();
+		textout.close() ;
 
 	}
 	
