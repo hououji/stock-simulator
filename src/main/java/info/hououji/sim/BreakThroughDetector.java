@@ -42,7 +42,7 @@ public class BreakThroughDetector extends Detector{
 			double volBT = csv.avg(periodForBreakThrough, periodForBreakThrough, CSV.VOL) ;
 			if( ! (volBT > changeForVolume * volWaiting) ) return false;
 			// pass
-			Log.log(csv.getName() + ", adf cls:" + csv.to2dp(csv.get(0, CSV.ADJ_CLOSE)) +", ex:" + csv.to2dp(csv.get(0, CSV.VOL_PRICE)));
+			Log.log(csv.getName() + ", adf cls:" + Misc.trim(csv.get(0, CSV.ADJ_CLOSE),3) +", ex:" + Misc.trim(csv.get(0, CSV.VOL_PRICE),3));
 			
 			if(btStart == null) {
 				btStart = csv.getDate(periodForBreakThrough) ;

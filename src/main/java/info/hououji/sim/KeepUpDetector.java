@@ -46,7 +46,7 @@ public class KeepUpDetector extends Detector{
 			if(d.marketCap < marketCap) return false;
 
 			// pass
-			Log.log(csv.getName() + ", adf cls:" + csv.to2dp(csv.get(0, CSV.ADJ_CLOSE)) +", vol price:" + csv.to2dp(csv.get(0, CSV.VOL_PRICE)));
+			Log.log(csv.getName() + ", adf cls:" + Misc.trim(csv.get(0, CSV.ADJ_CLOSE)) +", vol price:" + Misc.trim(csv.get(0, CSV.VOL_PRICE)));
 			
 			return true;
 		}catch(Exception ex) {

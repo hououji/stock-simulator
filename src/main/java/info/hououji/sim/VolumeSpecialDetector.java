@@ -45,7 +45,7 @@ public class VolumeSpecialDetector extends Detector{
 			Detail d = new Detail(csv.getCode()) ;
 			if(d.marketCap < 200) return false;
 			
-			System.out.println("code:" + csv.getCode() + ",sd:" + csv.to2dp( (currVol - avg )/sd));
+			System.out.println("code:" + csv.getCode() + ",sd:" + Misc.trim( (currVol - avg )/sd));
 
 			return true;
 		}catch(Exception ex) {

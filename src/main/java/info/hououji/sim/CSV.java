@@ -37,10 +37,10 @@ public class CSV {
 	
 	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd") ;
 	
-	public static  double to2dp(double d) {
-		long l = (long)(d * 100) ;
-		return l / 100.0;
-	}
+//	public static  double to2dp(double d) {
+//		long l = (long)(d * 100) ;
+//		return l / 100.0;
+//	}
 	
 	public void setBaseDay(int bd) {
 		baseDay = bd;
@@ -53,7 +53,7 @@ public class CSV {
 			sum += get(i,type) ;
 		}
 		
-		return to2dp(sum / len) ;
+		return Misc.trim(sum / len, 3) ;
 	}
 
 	public double max(int start, int len, int type) {
@@ -64,7 +64,7 @@ public class CSV {
 			if(d > max) max = d ;
 		}
 		
-		return to2dp(max) ;
+		return Misc.trim(max,3) ;
 	}
 	public double min(int start, int len, int type) {
 		double min = Double.MAX_VALUE ;
@@ -74,7 +74,7 @@ public class CSV {
 			if(d < min) min = d ;
 		}
 		
-		return to2dp(min) ;
+		return Misc.trim(min,3) ;
 	}
 
 	
@@ -173,20 +173,20 @@ NEW_LINE:
 	{
 		init(_file);
 	}
-	public static void main(String args[]) throws Exception {
+	public static void main3(String args[]) throws Exception {
 		CSV csv = new CSV("0004") ;
 		int day = csv.getItemNumFromDate(new SimpleDateFormat("yyyy-MM-dd").parse("2014-03-03")) ;
 		System.out.println(csv.getDate(day) + " " + csv.get(day, CSV.ADJ_CLOSE) + " " + day) ;
 	}
 	
-	public static void main2(String args[]) throws Exception {
-		CSV csv = new CSV( new File(Downloader.getRecentDirectory(), "0002.csv")) ;
+	public static void main(String args[]) throws Exception {
+		CSV csv = new CSV( new File(Downloader.getRecentDirectory(), "0204.csv")) ;
 		System.out.println(csv.getFile().getAbsolutePath());
 		for(int i=0; i<10; i++) {
 			System.out.println("5 avg ("+i+") : " + csv.avg(i, 5, VOL)) ;
 		}
 		for(int i=0; i<10; i++) {
-			System.out.println(csv.getDate(i) + " " + csv.get(i, VOL_PRICE)+ " " + csv.get(i, VOL)+ " " + to2dp(csv.get(i,ADJ_CLOSE)) ) ;
+			System.out.println(csv.getDate(i) + " " + csv.get(i, VOL_PRICE)+ " " + csv.get(i, VOL)+ " " + Misc.trim(csv.get(i,ADJ_CLOSE),3) ) ;
 		}
 		
 		for(int i=0; i<5; i++){

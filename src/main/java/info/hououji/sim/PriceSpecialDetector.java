@@ -29,7 +29,7 @@ public class PriceSpecialDetector {
 
 				if(avg10 > avg20 && avg20 > avg50 && avg50 > avg100 && avg100 > avg200)
 				{
-					Log.log(csv.getName() + " " +csv.getDate(i) + ", adf cls:" + csv.to2dp(csv.get(i, CSV.ADJ_CLOSE)) +", ex:" + csv.to2dp(csv.get(i, CSV.VOL_PRICE)));
+					Log.log(csv.getName() + " " +csv.getDate(i) + ", adf cls:" + Misc.trim(csv.get(i, CSV.ADJ_CLOSE)) +", ex:" + Misc.trim(csv.get(i, CSV.VOL_PRICE)));
 					i = i - 30;
 				}
 			}

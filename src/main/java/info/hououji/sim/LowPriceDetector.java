@@ -45,7 +45,7 @@ public class LowPriceDetector extends Detector{
 			if(d.marketCap < 50) return false;
 			
 			// pass
-			Log.log(csv.getName() + ", adf cls:" + csv.to2dp(csv.get(0, CSV.ADJ_CLOSE)) +", ex:" + csv.to2dp(csv.get(0, CSV.VOL_PRICE)));
+			Log.log(csv.getName() + ", adf cls:" + Misc.trim(csv.get(0, CSV.ADJ_CLOSE)) +", ex:" + Misc.trim(csv.get(0, CSV.VOL_PRICE)));
 			
 			return true;
 		}catch(Exception ex) {
