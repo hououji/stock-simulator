@@ -37,6 +37,10 @@ public class SendMail {
 		ByteArrayOutputStream out = new ByteArrayOutputStream() ;
 		IOUtils.copy(new FileInputStream("./output/choose-by-value.txt"), out) ;
 		content.append(new String(out.toByteArray())) ;
+		out = new ByteArrayOutputStream() ;
+		IOUtils.copy(new FileInputStream("./output/choose-by-bp.txt"), out) ;
+		content.append("<br><br>");
+		content.append(new String(out.toByteArray())) ;
 		
 		// Step1
 		System.out.println("\n 1st ===> setup Mail Server Properties..");
@@ -51,7 +55,7 @@ public class SendMail {
 		getMailSession = Session.getDefaultInstance(mailServerProperties, null);
 		generateMailMessage = new MimeMessage(getMailSession);
 		generateMailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress("hououji@gmail.com"));
-		generateMailMessage.setSubject("Stock Info Summary - " + new SimpleDateFormat("dd-mm-yyyy").format(new Date()));
+		generateMailMessage.setSubject("Stock Info Summary - " + new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
 //		generateMailMessage.setContent(content.toString(), "text/html");
 		MimeMultipart multipart = new MimeMultipart();
 		MimeBodyPart mimeBodyPart = new MimeBodyPart();

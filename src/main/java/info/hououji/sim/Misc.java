@@ -26,6 +26,7 @@ public class Misc {
 			if(str.indexOf("--") != -1) return 0;
 			
 			str = str.trim().replaceAll(",", "") ;
+			str = str.toUpperCase() ;
 			int sign = 1 ;
 			if(str.startsWith("(") && str.endsWith(")")) {
 				sign = -1 ;
@@ -35,6 +36,22 @@ public class Misc {
 			if(str.endsWith("%")) {
 				str = str.substring(0, str.length() -1) ;
 				m = 0.01 ;
+			}
+			if(str.endsWith("B")) {
+				str = str.substring(0, str.length() -1) ;
+				m = 1000000000 ;
+			}
+			if(str.endsWith("B")) {
+				str = str.substring(0, str.length() -1) ;
+				m = 1000000000 ;
+			}
+			if(str.endsWith("M")) {
+				str = str.substring(0, str.length() -1) ;
+				m = 1000000 ;
+			}
+			if(str.endsWith("K")) {
+				str = str.substring(0, str.length() -1) ;
+				m = 1000 ;
 			}
 			return Double.parseDouble(str) * sign * m;
 		}catch(Exception ex) {

@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 public class PsPeForOneStock {
 
 	public static void main(String args[]) throws Exception {
-		String code = "1193" ;
+		String code = "2799" ;
 		EtnetHistIncome h = new EtnetHistIncome(code) ;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd") ;
 		CSV csv = new CSV(code) ;
