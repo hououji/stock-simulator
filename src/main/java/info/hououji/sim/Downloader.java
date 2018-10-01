@@ -158,6 +158,11 @@ public class Downloader implements Runnable {
 		try {
 			Log.log("download start : " + code) ;
 			File file = new File(dir, code + ".csv") ;
+			if(file.exists() &&  (new Date().getTime() -  file.lastModified()) < 1000 * 60 * 60 * 24  ) {
+				// same file is exist within 1 day skip.
+				Log.log("File exist within 1 day, skip");
+				return ;
+			}
 			URL url = new URL("https://query1.finance.yahoo.com/v7/finance/download/"+code+".HK?period1=0&period2="+new Date().getTime()+"&interval=1d&events=history&crumb=" + crumb) ;
 			String csv = CachedDownload.getString(url,false) ;// since the crumb will change , cache is no use 
 			String line[] = csv.split("\n") ;

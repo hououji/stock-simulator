@@ -39,7 +39,7 @@ public class ChooseByPBToHtml {
 //				double minHighPs = 10000 ;
 				ArrayList<Double> lowPsList = new ArrayList<Double>() ;
 				ArrayList<Double> highPsList = new ArrayList<Double>() ;
-//				ArrayList<Double> lowPriceList = new ArrayList<Double>() ;
+				ArrayList<Double> lowPriceList = new ArrayList<Double>() ;
 //				ArrayList<Double> highPriceList = new ArrayList<Double>() ;
 				double currBookValue = 10000;
 				for(int i=0; i<=4;i++) {
@@ -62,6 +62,7 @@ public class ChooseByPBToHtml {
 					
 					lowPsList.add(low/bookValue) ;
 					highPsList.add(high/bookValue) ;
+					lowPriceList.add(low) ;
 					
 //					msg = msg + h.dataset.getDouble("營業額", i) + " " + sale + " " + h.currRate + " ";
 					
@@ -75,12 +76,18 @@ public class ChooseByPBToHtml {
 					 + "<td>" + Misc.formatPrice(high/bookValue,8) + "</td>"
 					+ "</tr>" ;
 				}
+				
+				if(lowPriceList.get(0) < lowPriceList.get(1) && lowPriceList.get(1) < lowPriceList.get(2)){
+					// 一浪低於一浪
+					continue;
+				}
+				
 				currPB = csv.get(0, CSV.ADJ_CLOSE) / currBookValue ;
 				Collections.sort(lowPsList);
 				Collections.sort(highPsList);
 				double secondMinLowPs = lowPsList.get(1) ;
 				double secondMinHighPs = highPsList.get(1) ;
-				if(currPB < secondMinLowPs * 1.1 || currPB < secondMinHighPs * 0.6 ) {
+				if(currPB < secondMinLowPs  ) {
 //					System.out.println("code:" + code + ",curr price:" + Misc.trim(csv.get(0, CSV.ADJ_CLOSE)) + ",curr PS:" + Misc.trim(currPs) +",2nd min Low Ps:" + Misc.trim(minLowPs) + ",2nd min High Ps:" + Misc.trim(minHighPs)) ;
 //					System.out.println("                         # of Share     PS=1.0   PRICE/L  PRICE/H  PS/L     PS/H") ;
 //					System.out.println(msg) ;
@@ -165,11 +172,15 @@ public class ChooseByPBToHtml {
 				EtnetHistIncome e = new EtnetHistIncome(code) ;
 				EtnetHistRatio r = new EtnetHistRatio(code) ;
 				
+				if("人民幣".equals(e.currency)) {
+					continue;
+				}
+				
 				double roe[] = new double[5] ;
 				int passCount = 0 ;
 				for(int i=0; i<roe.length; i++) {
 					roe[i] = r.dataset.getDouble("股東資金回報率", i) ;
-					if(roe[i] > 12) passCount ++ ;
+					if(roe[i] > 9) passCount ++ ;
 				}
 				if(passCount < 4) continue;
 				
@@ -182,6 +193,13 @@ public class ChooseByPBToHtml {
 
 				if(e.dataset.getDouble("每股帳面資產淨值", 0) < e.dataset.getDouble("每股帳面資產淨值", 4) * 1.2) {
 					// it need to has at least slight increase within 5 year
+					continue;
+				}
+
+				if(e.dataset.getDouble("每股帳面資產淨值", 0) < e.dataset.getDouble("每股帳面資產淨值", 1) 
+						|| e.dataset.getDouble("每股帳面資產淨值", 1) < e.dataset.getDouble("每股帳面資產淨值", 2))
+				{
+					// near two year Book Value decrease
 					continue;
 				}
 				
