@@ -105,9 +105,15 @@ public class USDownloader implements Runnable {
 //		};
 
 		// ROE > 15%, Sale > 15%(5 years), Earing > 20% (5 years), Cap > 2b
+//		String codes[] = new String[]{
+//				"AB","ABMD","AEL","AL","ALGN","AM","AMCX","AMN","AMZN","ANET","APPF","ASGN","BIIB","BKNG","CBRE","CELG","CHTR","COHR","COR","CQP","DFS","DHI","DXC","EQGP","EVR","EXEL","EXP","EXR","FB","FIVE","FLT","FND","FOXF","GLPI","GWR","HALO","HQY","ILMN","IPGP","KHC","KW","LGND","LRCX","MKSI","MKTX","MOH","MPLX","MPWR","MU","NCLH","NFLX","NKTR","NRZ","NVDA","OLLI","PAYC","PCTY","PKG","PSXP","RH","RHT","SFM","STMP","STZ","SWKS","TAL","THO","TNET","TPL","TREE","TWTR","UBNT","ULTA","VEEV","VLP","WAL","WGP"	
+//		};
+
+		//test
 		String codes[] = new String[]{
-				"AB","ABMD","AEL","AL","ALGN","AM","AMCX","AMN","AMZN","ANET","APPF","ASGN","BIIB","BKNG","CBRE","CELG","CHTR","COHR","COR","CQP","DFS","DHI","DXC","EQGP","EVR","EXEL","EXP","EXR","FB","FIVE","FLT","FND","FOXF","GLPI","GWR","HALO","HQY","ILMN","IPGP","KHC","KW","LGND","LRCX","MKSI","MKTX","MOH","MPLX","MPWR","MU","NCLH","NFLX","NKTR","NRZ","NVDA","OLLI","PAYC","PCTY","PKG","PSXP","RH","RHT","SFM","STMP","STZ","SWKS","TAL","THO","TNET","TPL","TREE","TWTR","UBNT","ULTA","VEEV","VLP","WAL","WGP"	
+				"WAL"	
 		};
+		
 		
 		for(int i=0; i<codes.length ; i++) {
 			System.out.println("list "+i+"/" + codes.length)  ;

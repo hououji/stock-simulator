@@ -47,7 +47,13 @@ public class USChooseByPs {
 					double high = csv.max(end, (start-end+1), CSV.HIGH) ;
 					double low = csv.min(end, (start-end+1), CSV.LOW) ;
 
-					double sale = mwi.dataset.getDouble("Sales/Revenue", i) ;
+					double sale = 0;
+					try{
+						sale = mwi.dataset.getDouble("Sales/Revenue", i) ;
+					}catch(Exception ex) {
+						sale = mwi.dataset.getDouble("Net Income", i) ;
+					}
+
 					double share = mwi.dataset.getDouble("Diluted Shares Outstanding", i) ;
 					double ps1 = sale / share ;
 					if(i==4) currPs1 = ps1;
