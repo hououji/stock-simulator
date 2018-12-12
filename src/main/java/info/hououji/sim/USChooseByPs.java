@@ -20,7 +20,7 @@ public class USChooseByPs {
 	public static void main(String args[]) throws Exception {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd") ;
 		
-		code:for(File f : DownloaderUS.getRecentDirectory().listFiles()) {
+		code:for(File f : USDownloader.getRecentDirectory().listFiles()) {
 			try{
 				String code = f.getName().split("\\.")[0];
 //				System.out.println(code) ;
