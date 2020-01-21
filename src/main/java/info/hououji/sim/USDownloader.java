@@ -109,10 +109,15 @@ public class USDownloader implements Runnable {
 //				"AB","ABMD","AEL","AL","ALGN","AM","AMCX","AMN","AMZN","ANET","APPF","ASGN","BIIB","BKNG","CBRE","CELG","CHTR","COHR","COR","CQP","DFS","DHI","DXC","EQGP","EVR","EXEL","EXP","EXR","FB","FIVE","FLT","FND","FOXF","GLPI","GWR","HALO","HQY","ILMN","IPGP","KHC","KW","LGND","LRCX","MKSI","MKTX","MOH","MPLX","MPWR","MU","NCLH","NFLX","NKTR","NRZ","NVDA","OLLI","PAYC","PCTY","PKG","PSXP","RH","RHT","SFM","STMP","STZ","SWKS","TAL","THO","TNET","TPL","TREE","TWTR","UBNT","ULTA","VEEV","VLP","WAL","WGP"	
 //		};
 
-		//test
+		// Dividend > 6%, +Mid, ROE > 10%
 		String codes[] = new String[]{
-				"WAL"	
+				"AB","APAM","GLPI","IRM","M","MFA","MO","PMT"
 		};
+		
+		//test
+//		String codes[] = new String[]{
+//				"WAL"	
+//		};
 		
 		
 		for(int i=0; i<codes.length ; i++) {
