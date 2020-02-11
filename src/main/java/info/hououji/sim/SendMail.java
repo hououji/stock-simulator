@@ -74,7 +74,7 @@ public class SendMail {
 		// https://support.google.com/mail/answer/185833?hl=en-GB
 		// Enter your correct gmail UserID and Password
 		// if you have 2FA enabled then provide App Specific Password
-		transport.connect("smtp.gmail.com", "hououji2000@gmail.com", "plqixhcbslppikbs");
+		transport.connect("smtp.gmail.com", "hououji2000@gmail.com", "rzvhrikthlrtfwgl");
 		transport.sendMessage(generateMailMessage, generateMailMessage.getAllRecipients());
 		transport.close();
 	}

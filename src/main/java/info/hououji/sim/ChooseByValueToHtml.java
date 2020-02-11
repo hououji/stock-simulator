@@ -171,6 +171,10 @@ public class ChooseByValueToHtml {
 				EtnetHistIncome e = new EtnetHistIncome(code) ;
 				EtnetHistRatio r = new EtnetHistRatio(code) ;
 				
+				if("人民幣".equals(e.currency)) {
+					continue;
+				}
+				
 				double roe[] = new double[5] ;
 				int passCount = 0 ;
 				for(int i=0; i<roe.length; i++) {
