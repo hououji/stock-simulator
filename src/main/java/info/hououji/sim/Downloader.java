@@ -1,9 +1,10 @@
 package info.hououji.sim;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
@@ -66,8 +67,9 @@ public class Downloader implements Runnable {
 
 		String crumb = null ;
 		while(true) {
-			String html = CachedDownload.getString(new URL(urlstr),false) ;
+			String html = CachedDownload.getString(new URL(urlstr),false) ; // TODO useCache should be false after test
 			crumb = getYahooCrumb(html) ;
+if(1==1) return "" ;			
 			System.out.println(crumb) ;
 			if(crumb.indexOf("002F")== -1) break; // retry if crumb include 002F
 			System.out.println("get crumb fail, wait for retry") ;
@@ -97,15 +99,15 @@ public class Downloader implements Runnable {
 		
 		String crumb = getCrumb() ;
 		System.out.println("crumb : " + crumb) ;
-		
+//if(1==1) return;		
 		// Go
 		File dir = new File("./data/" + new SimpleDateFormat("yyyyMMdd").format(new Date())) ;
 		dir.mkdirs() ;
 		
 		ExecutorService executor = Executors.newFixedThreadPool(5);
 		
-		//String html = CachedDownload.getString(new URL("https://webb-site.com/dbpub/mcap.asp")) ;
-		String html = IOUtils.toString(new FileInputStream(new File("mcap.asp"))) ;
+		String html = CachedDownload.getString(new URL("https://webb-site.com/dbpub/mcap.asp")) ;
+		//String html = IOUtils.toString(new FileInputStream(new File("mcap.asp"))) ;
 		Document doc ;
 		doc = Jsoup.parse(html ) ;
 		Elements stockHref = doc.select("table.numtable tr td:eq(1) a") ;
@@ -124,11 +126,15 @@ public class Downloader implements Runnable {
 	}
 	
 	public static String getYahooCrumb(String html) {
-		html = html.replaceAll("\\{", "\n").replaceAll("\\}", "\n") ;
+		// "CrumbStore":{"crumb":"JbA3mLICLk8"}
 		String crumb = "" ;
-		for(String line : html.split("\n")) {
-			if(line.indexOf("\"firstName\"") != -1 && line.indexOf("\"crumb\"") != -1) {
-				crumb = line.split("\\\"")[3] ;
+		String crumbHead = "\"crumb\":\"" ;
+		for(String line : html.split(",")) {
+			if(line.indexOf("CrumbStore") != -1) {
+				int idx1 = line.indexOf(crumbHead) ;
+				int idx2 = line.indexOf("\"", idx1 + crumbHead.length()) ;
+				crumb = line.substring(idx1 + crumbHead.length(),idx2) ;
+				break;
 			}
 		}
 //		crumb = crumb.replaceAll("\\u002F", "\\") ;

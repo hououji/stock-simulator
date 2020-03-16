@@ -36,17 +36,38 @@ public class CachedDownload {
 			}
 		}
 		
+		String curl = System.getenv("CURL_CMD") ;
 		
-		System.out.println("download:" + url.toString());
-		URLConnection hc = url.openConnection() ;
-		hc.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
-		String html = IOUtils.toString(hc.getInputStream()) ;
+//		System.out.println("download:" + url.toString());
+//		URLConnection hc = url.openConnection() ;
+//		hc.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
+//		String html = IOUtils.toString(hc.getInputStream()) ;
 
 		outfile.getParentFile().mkdirs() ;
-		PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(outfile), "utf-8")) ;
-		out.println(html);
-		out.flush();
-		out.close();
+
+		String cmd = curl + "  --output " + outfile.getAbsolutePath() + " " + url.toString() ; 
+		System.out.println("command : " + cmd);
+		String s;
+		Process p;
+		try {
+			p = Runtime.getRuntime().exec(cmd);
+			BufferedReader br = new BufferedReader(
+					new InputStreamReader(p.getInputStream()));
+			while ((s = br.readLine()) != null) {
+				//System.out.println("line: " + s);
+			}
+			p.waitFor();
+			System.out.println ("exit: " + p.exitValue());
+			p.destroy();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		
+//		PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(outfile), "utf-8")) ;
+//		out.println(html);
+//		out.flush();
+//		out.close();
 
 		return outfile ;
 	}
