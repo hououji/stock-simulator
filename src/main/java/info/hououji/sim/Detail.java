@@ -22,11 +22,11 @@ public class Detail {
 	double marketCap ;
 	double pe ;
 	double div ;
-	double close;
+//	double close;
 	String name = "";
-	String vol = "";
-	double p52wl ;
-	double p52wh ;
+//	String vol = "";
+//	double p52wl ;
+//	double p52wh ;
 	double pb;
 	double nav;
 	double earn;
@@ -40,149 +40,212 @@ public class Detail {
 	public void init(boolean useCache) {
 		InputStream in = null;
 		try{
-			String html = "" ;
-			Document doc ;
+			
+			EtnetHistCommon ehi = new EtnetHistCommon(code) ;
+			
+			try{
+				String s = ehi.dataset.getStr("市值(港元)") ;
+				if(s.indexOf("億") > 0) {
+					this.marketCap  = trim(Double.parseDouble(s.replaceAll(",", "").replaceAll("億", "")) ) ;
+				}
+//				if(s.indexOf("") > 0) {
+//					this.marketCap  = trim(Double.parseDouble(s.replaceAll(",", "").replaceAll("M", "")) / 100) ;
+//				}
+			}catch(Exception ex){
+				ex.printStackTrace();
+			}
+			
+			try {
+				String s = ehi.dataset.getStr("市盈率(倍)") ;
+				this.pe = parseDouble(s) ;
+			}catch(Exception ex) {
+				ex.printStackTrace();
+			}
+
+			try {
+				String s = ehi.dataset.getStr("股價/每股淨資產值(倍)") ;
+				this.pb = parseDouble(s) ;
+			}catch(Exception ex) {
+				ex.printStackTrace();
+			}
+
+			try {
+				String s = ehi.dataset.getStr("周息率(%)") ;
+				this.div = parseDouble(s) ;
+			}catch(Exception ex) {
+				ex.printStackTrace();
+			}
+
+			try{
+				String s = ehi.dataset.getStr("每股淨資產值 (港元)") ;
+				this.nav  = trim(Double.parseDouble(s.replaceAll(",", "").replaceAll("元", "")) ) ;
+			}catch(Exception ex){
+				ex.printStackTrace();
+			}
+
+			try{
+				String s = ehi.dataset.getStr("每股盈利 (港元)") ;
+				if(s.indexOf("仙") > 0) {
+					this.earn  = trim(Double.parseDouble(s.replaceAll("仙", "")) * 0.01 ) ;
+				}
+				if(s.indexOf("元") > 0) {
+					this.earn  = trim(Double.parseDouble(s.replaceAll("元", ""))) ;
+				}
+
+			}catch(Exception ex){
+				ex.printStackTrace();
+			}
+			
+			this.name = ehi.name ;
+			
+			
+			
+//			String html = "" ;
+//			Document doc ;
 			
 //			URL url = new URL("http://www.aastocks.com/tc/mobile/Quote.aspx?symbol=0" + code) ;
 //			URL url = new URL("http://www.aastocks.com/tc/stocks/quote/detail-quote.aspx?symbol=0" + code) ;
-			URL url = new URL("http://www.quamnet.com/Quote.action?stockCode=" + code) ;
+//			URL url = new URL("https://hk.finance.yahoo.com/quote/" + code +".HK?p=0240.HK&.tsrc=fin-srch") ;
 			
 //			System.out.println(url.toString()) ;
 //			URLConnection hc = url.openConnection() ;
 //			hc.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
 //			in = hc.getInputStream() ;
 //			html = IOUtils.toString(in) ;
-			html = CachedDownload.getString(url,useCache) ;
-			doc = Jsoup.parse(html ) ;
+//			html = CachedDownload.getString(url,useCache) ;
+//			doc = Jsoup.parse(html ) ;
+//			System.out.println("========================================");
 //			System.out.println(html) ;
+//			System.out.println("========================================");
 			
-			Elements es ;
+//			Elements es ;
+//			
+//			es = getElements(doc,"市值");
+//			for(Element e :es) {
+//				try{
+//					String s = e.html() ;
+//					if(s.indexOf("B") > 0) {
+//						this.marketCap  = trim(Double.parseDouble(e.html().replaceAll(",", "").replaceAll("B", "")) * 10) ;
+//					}
+//					if(s.indexOf("M") > 0) {
+//						this.marketCap  = trim(Double.parseDouble(e.html().replaceAll(",", "").replaceAll("M", "")) / 100) ;
+//					}
+//					break;
+//				}catch(Exception ex){
+//					ex.printStackTrace();
+//				}
+//			}
+//			
+//			
+//			es = getElements(doc,"市盈率");
+//			for(Element e :es) {
+//				try{
+//					this.pe = parseDouble(e.html().replaceAll("%", "")) ;
+//					break;
+//				}catch(Exception ex){
+//					ex.printStackTrace();
+//				}
+//			}
+//			
+//			es = getElements(doc,"週息率");
+//			for(Element e :es) {
+//				try{
+//					div = parseDouble(e.html().replaceAll("%", "")) ;
+//					break;
+//				}catch(Exception ex){
+//					ex.printStackTrace();
+//				}
+//			}
+//			
+//			es = doc.select("div:contains(現價) + div") ;
+//			for(Element e :es) {
+//				try{
+//					if("停牌".equals(e.html())) {
+//						this.stockSuspend = true;
+//						return ;
+//					}
+//					close = parseDouble(e.html()) ;
+//					break;
+//				}catch(Exception ex){
+//					ex.printStackTrace();
+//				}
+//			}
+//			
+//			es = doc.select("#chartAnnouncement a.content_lt_blue_link") ;
+//			for(Element e :es) {
+//				String name = e.html() ;
+//				if(name == null) continue;
+//				name = name.trim() ;
+//				if("".equals(name)) continue;
+//				int idx = name.indexOf("(") ;
+//				if(idx == -1) {
+//					this.name = name ;
+//					break;
+//				}
+//				this.name = name.substring(0,idx) ;
+//				break;
+//			}
+//			
+//			es = doc.select("div:contains(成交額) + div") ;
+//			for(Element e :es) {
+//				try{
+//					vol = e.html() ;
+//					break;
+//				}catch(Exception ex){
+//					ex.printStackTrace();
+//				}
+//			}
+//			
+//			es = doc.select("div:contains(52週高位) + div") ;
+//			for(Element e :es) {
+//				try{
+//					this.p52wh =  parseDouble(e.html()) ;
+//					break;
+//				}catch(Exception ex){
+//					ex.printStackTrace();
+//				}
+//			}
+//			
+//			es = doc.select("div:contains(52週低位) + div") ;
+//			for(Element e :es) {
+//				try{
+//					this.p52wl = parseDouble(e.html()) ;
+//					break;
+//				}catch(Exception ex){
+//					ex.printStackTrace();
+//				}
+//			}
+//			
+//			es = getElements(doc,"市賬率");
+//			for(Element e :es) {
+//				try{
+//					String s = e.html();
+//					this.pb =  parseDouble(e.html()) ;
+//					break;
+//				}catch(Exception ex){
+//					ex.printStackTrace();
+//				}
+//			}
+//			
+//			es = getElements(doc,"每股淨值");
+//			for(Element e :es) {
+//				try{
+//					this.nav = parseDouble(e.html()) ;
+//				}catch(Exception ex){
+//					ex.printStackTrace();
+//				}
+//			}
+//			
+//			es = getElements(doc,"每股盈利");
+//			for(Element e :es) {
+//				try{
+//					this.earn = parseDouble(e.html()) ;
+//					break;
+//				}catch(Exception ex){
+//					ex.printStackTrace();
+//				}
+//			}
 			
-			es = getElements(doc,"市值");
-			for(Element e :es) {
-				try{
-					String s = e.html() ;
-					if(s.indexOf("B") > 0) {
-						this.marketCap  = trim(Double.parseDouble(e.html().replaceAll(",", "").replaceAll("B", "")) * 10) ;
-					}
-					if(s.indexOf("M") > 0) {
-						this.marketCap  = trim(Double.parseDouble(e.html().replaceAll(",", "").replaceAll("M", "")) / 100) ;
-					}
-					break;
-				}catch(Exception ex){
-					ex.printStackTrace();
-				}
-			}
-			
-			
-			es = getElements(doc,"市盈率");
-			for(Element e :es) {
-				try{
-					this.pe = parseDouble(e.html().replaceAll("%", "")) ;
-					break;
-				}catch(Exception ex){
-					ex.printStackTrace();
-				}
-			}
-			
-			es = getElements(doc,"週息率");
-			for(Element e :es) {
-				try{
-					div = parseDouble(e.html().replaceAll("%", "")) ;
-					break;
-				}catch(Exception ex){
-					ex.printStackTrace();
-				}
-			}
-			
-			es = doc.select("div:contains(現價) + div") ;
-			for(Element e :es) {
-				try{
-					if("停牌".equals(e.html())) {
-						this.stockSuspend = true;
-						return ;
-					}
-					close = parseDouble(e.html()) ;
-					break;
-				}catch(Exception ex){
-					ex.printStackTrace();
-				}
-			}
-			
-			es = doc.select("#chartAnnouncement a.content_lt_blue_link") ;
-			for(Element e :es) {
-				String name = e.html() ;
-				if(name == null) continue;
-				name = name.trim() ;
-				if("".equals(name)) continue;
-				int idx = name.indexOf("(") ;
-				if(idx == -1) {
-					this.name = name ;
-					break;
-				}
-				this.name = name.substring(0,idx) ;
-				break;
-			}
-			
-			es = doc.select("div:contains(成交額) + div") ;
-			for(Element e :es) {
-				try{
-					vol = e.html() ;
-					break;
-				}catch(Exception ex){
-					ex.printStackTrace();
-				}
-			}
-			
-			es = doc.select("div:contains(52週高位) + div") ;
-			for(Element e :es) {
-				try{
-					this.p52wh =  parseDouble(e.html()) ;
-					break;
-				}catch(Exception ex){
-					ex.printStackTrace();
-				}
-			}
-			
-			es = doc.select("div:contains(52週低位) + div") ;
-			for(Element e :es) {
-				try{
-					this.p52wl = parseDouble(e.html()) ;
-					break;
-				}catch(Exception ex){
-					ex.printStackTrace();
-				}
-			}
-			
-			es = getElements(doc,"市賬率");
-			for(Element e :es) {
-				try{
-					String s = e.html();
-					this.pb =  parseDouble(e.html()) ;
-					break;
-				}catch(Exception ex){
-					ex.printStackTrace();
-				}
-			}
-			
-			es = getElements(doc,"每股淨值");
-			for(Element e :es) {
-				try{
-					this.nav = parseDouble(e.html()) ;
-				}catch(Exception ex){
-					ex.printStackTrace();
-				}
-			}
-			
-			es = getElements(doc,"每股盈利");
-			for(Element e :es) {
-				try{
-					this.earn = parseDouble(e.html()) ;
-					break;
-				}catch(Exception ex){
-					ex.printStackTrace();
-				}
-			}
 			
 		}catch(Exception ex){
 			throw new RuntimeException(ex) ;
@@ -220,25 +283,25 @@ public class Detail {
 		return this.div ;
 	}
 	
-	public double getClose() {
-		return this.close ;
-	}
+//	public double getClose() {
+//		return this.close ;
+//	}
 	
 	public String getName() {
 		return this.name ;
 	}
 	
-	public String getVol() {
-		return this.vol ;
-	}
+//	public String getVol() {
+//		return this.vol ;
+//	}
 	
-	public double get52wh() {
-		return this.p52wh ;
-	}
-
-	public double get52wl() {
-		return this.p52wl ;
-	}
+//	public double get52wh() {
+//		return this.p52wh ;
+//	}
+//
+//	public double get52wl() {
+//		return this.p52wl ;
+//	}
 	
 	public double getPb() {
 		return this.pb;
@@ -263,17 +326,17 @@ public class Detail {
 		return code 
 				+ "," +this.getName() 
 				+","+ this.getMarketCap() 
-				+ "," + this.getVol()
+//				+ "," + this.getVol()
 				+","+this.getPe()
 				
 				+"," + this.getPb() 
 				+","+this.getDiv()
 				+"," + this.getEarn()
 				+"," + this.getNav()
-				+"," + this.getClose()
+//				+"," + this.getClose()
 				
-				+"," + this.get52wl()
-				+"," + this.get52wh()
+//				+"," + this.get52wl()
+//				+"," + this.get52wh()
 				
 				;
 	}
@@ -300,10 +363,10 @@ public class Detail {
 		System.out.println("Div:"+d.getDiv()) ;
 		System.out.println("Cap:"+d.getMarketCap()) ;
 		System.out.println("Name:"+d.getName()) ;
-		System.out.println("Close:"+d.getClose()) ;
-		System.out.println("Vol:"+d.getVol()) ;
-		System.out.println("52H:"+d.get52wh()) ;
-		System.out.println("52L:"+d.get52wl()) ;
+//		System.out.println("Close:"+d.getClose()) ;
+//		System.out.println("Vol:"+d.getVol()) ;
+//		System.out.println("52H:"+d.get52wh()) ;
+//		System.out.println("52L:"+d.get52wl()) ;
 		System.out.println("NAV:"+d.getNav()) ;
 		System.out.println("Earn:"+d.getEarn()) ;
 		
