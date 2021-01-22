@@ -90,7 +90,7 @@ public class MarketWatchIncome {
 //			}
 			
 			{
-				Elements trsYear = doc.select("table.crDataTable thead tr.topRow") ;
+				Elements trsYear = doc.select("table.table--overflow thead tr.table__row") ;
 				Elements es = trsYear.get(0).select("th") ;
 				Row r = new Row() ;
 				r.name = "year" ;
@@ -102,13 +102,14 @@ public class MarketWatchIncome {
 				dataset.date = r ;
 			}
 			
-			Elements trs = doc.select("table.crDataTable tbody tr") ;
+			Elements trs = doc.select("table.table--overflow tbody tr") ;
 			{
 				for(int count=0; count<trs.size(); count++ ){
 					Elements es = trs.get(count).select("td") ;
 					Row r = new Row() ;
 					try{
-						r.name = es.get(0).text() ;
+						Elements nameEs = es.get(0).select("div") ;
+						r.name = nameEs.get(0).text() ;
 						r.data.add(es.get(1).text()) ;
 						r.data.add(es.get(2).text()) ;
 						r.data.add(es.get(3).text()) ;
@@ -164,13 +165,15 @@ public class MarketWatchIncome {
 	public static void main(String args[]) throws Exception {
 		MarketWatchIncome mwi = new MarketWatchIncome("unh") ;
 		
-		for(Row r : mwi.dataset.rows) {
-			System.out.println(r.toString()) ;
-		}
+//		for(Row r : mwi.dataset.rows) {
+//			System.out.println(r.toString()) ;
+//		}
 		
 		System.out.println(mwi.dataset.date.data.get(4)) ;
 		System.out.println(Misc.formatMoney(mwi.dataset.getDouble("Sales/Revenue", 4))) ;
+		System.out.println(Misc.formatMoney(mwi.dataset.getDouble("Net Income", 4))) ;
 		System.out.println(Misc.formatMoney(mwi.dataset.getDouble("Diluted Shares Outstanding", 4))) ;
+
 		
 //		System.out.println(ehi.name) ;
 //		System.out.println(ehi.dataset.toString()) ;
