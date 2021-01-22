@@ -42,9 +42,10 @@ public class Detail {
 		try{
 			
 			EtnetHistCommon ehi = new EtnetHistCommon(code) ;
+			EtnetBasicInfo ebi = new EtnetBasicInfo(code) ;
 			
 			try{
-				String s = ehi.dataset.getStr("市值(港元)") ;
+				String s = ebi.dataset.getStr("市值 (港元)") ;
 				if(s.indexOf("億") > 0) {
 					this.marketCap  = trim(Double.parseDouble(s.replaceAll(",", "").replaceAll("億", "")) ) ;
 				}
