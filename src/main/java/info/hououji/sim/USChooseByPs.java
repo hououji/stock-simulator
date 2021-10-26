@@ -3,6 +3,7 @@ package info.hououji.sim;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,6 +20,7 @@ public class USChooseByPs {
 
 	public static void main(String args[]) throws Exception {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd") ;
+		DecimalFormat df = new DecimalFormat("0.##E0");
 		
 		code:for(File f : USDownloader.getRecentDirectory().listFiles()) {
 			try{
@@ -63,7 +65,7 @@ public class USChooseByPs {
 
 					msg = msg + sdf.format(startDate) 
 					+ " " + sdf.format(endDate)
-					 + " " + Misc.lpad(share+"", 13) 
+					 + " " + Misc.lpad(df.format(share), 13) 
 					 + " " + Misc.formatPrice(ps1,8)
 					 + " " +Misc.formatPrice(low,8) 
 					 + " " + Misc.formatPrice(high, 8)
