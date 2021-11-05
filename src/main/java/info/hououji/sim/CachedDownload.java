@@ -45,7 +45,7 @@ public class CachedDownload {
 
 		outfile.getParentFile().mkdirs() ;
 
-		String cmd = curl + "  --output " + outfile.getAbsolutePath() + " " + url.toString() ; 
+		String cmd = curl + " --insecure --output " + outfile.getAbsolutePath() + " " + url.toString() ; 
 		System.out.println("command : " + cmd);
 		String s;
 		Process p;
