@@ -81,4 +81,9 @@ public class CachedDownload {
 		String html = IOUtils.toString(in) ;
 		return html; 
 	}
+	
+	public static void main(String args[]) throws Exception {
+		String url = "https://www.wsj.com/market-data/quotes/CPB/financials/annual/income-statement" ;
+		getFile(new URL(url), true) ;
+	}
 }
